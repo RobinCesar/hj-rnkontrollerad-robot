@@ -135,18 +135,21 @@ what a correct null distribution looks like.
 
 ### Comparative baselines
 
-The full set for your results table:
+A single accuracy is uninterpretable. What you report is a **ladder** of conditions, all
+run through the identical pipeline so that only the data differs, ordered from "no signal
+by construction" to "signal that is definitely present". The canonical version lives in
+[REPORT.md](../REPORT.md#d1-the-ladder) section D.1 and is filled in as you go; do not
+maintain a second copy here.
 
-| Baseline | Why |
-|---|---|
-| Theoretical chance (50 %) | Reference point |
-| Binomial 95 % upper bound for your n | The threshold you must actually exceed |
-| Permutation test p-value | Empirical significance, and a leakage detector |
-| Same pipeline on public 64-ch data | Proves the pipeline works |
-| Same pipeline, Muse-like channel subset | Isolates the hardware limitation |
-| Own data, motor execution | Proves the recording and labelling chain works |
-| Own data, motor imagery | The actual result |
-| Deliberate-artifact session | Upper bound on what artifacts alone achieve |
+The principle behind it is worth stating on its own, because it generalises far past this
+project: **you learn from the gaps between conditions, not from any one number.** The
+public-data row tells you the pipeline works. The channel-subset row tells you what the
+hardware costs. The deliberate eye/jaw row tells you what a non-neural signal achieves on
+the same equipment, which is the ceiling your real result has to be distinguished from.
+An imagery accuracy sitting close to that ceiling is a warning, not a success.
+
+Designing the comparison set is the actual skill here. Running cross-validation is the
+easy part.
 
 ## Metrics beyond accuracy
 
@@ -169,17 +172,88 @@ The full set for your results table:
   pipeline, which defeats its purpose as a leakage detector.
 * Presenting a within-session cross-validation number as if it predicted real-world use.
 
-## Check yourself
+## Questions
 
-1. Why must CSP be inside the `Pipeline` rather than applied beforehand?
-2. You have 40 test trials and get 62 % accuracy. Is that significant? How would you
-   check?
-3. Your permutation null distribution is centred at 61 % rather than 50 %. What does
-   that tell you?
-4. Why is `StratifiedKFold` preferable to `KFold` here?
-5. You try five epoch windows and report the best cross-validated score. What is wrong,
-   and what are two ways to fix it?
-6. Why might within-session cross-validation overestimate how well the game will work?
+Write your answers in the boxes. See
+[the convention](README.md#answering-the-questions).
+
+**Q1.** Why must CSP be inside the `Pipeline` rather than applied beforehand?
+*Source: this document. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q2.** You have 40 test trials and get 62 % accuracy. Is that significant? How would
+you check?
+*Source: this document. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q3.** Your permutation null distribution is centred at 61 % rather than 50 %. What
+does that tell you?
+*Source: this document. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q4.** Why is `StratifiedKFold` preferable to `KFold` here?
+*Source: this document. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q5.** You try five epoch windows and report the best cross-validated score. What is
+wrong, and what are two ways to fix it?
+*Source: this document. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q6.** Why might within-session cross-validation overestimate how well the game will
+work?
+*Source: this document. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q7.** `shuffle=True` assumes something about your trials that is not quite true in
+EEG. What is the assumption, why is it violated, and which direction does the violation
+bias your accuracy?
+*Source: this document. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q8.** What is the difference between `cross_val_score`, `cross_validate` and
+`cross_val_predict`? The documentation warns against using one of them to compute a
+generalisation metric. Which one, and why?
+*Source: scikit-learn, "Cross-validation: evaluating estimator performance".
+`reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q9.** What does `GroupKFold` guarantee that `StratifiedKFold` does not? In your own
+recordings, what would be the natural thing to use as a group, and what leak would that
+prevent?
+*Source: scikit-learn, "Cross-validation: evaluating estimator performance".
+`reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q10.** What three things does `permutation_test_score` return, and how exactly is the
+p-value computed? There is a `+1` in the formula. What is it for?
+*Source: scikit-learn, "Test with permutations the significance of a classification
+score". `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q11.** Section 7.10.2 of ESL, "The Wrong and Right Way to Do Cross-validation", walks
+through a concrete example. Describe what was done wrong, what accuracy it produced, and
+what the true accuracy should have been given how the data was generated.
+*Source: Hastie, Tibshirani & Friedman, "The Elements of Statistical Learning",
+section 7.10.2. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q12.** MOABB defines three evaluation protocols. Name them, and say which one most
+closely matches how someone would actually sit down and play your game.
+*Source: MOABB documentation. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
 
 ## Sources
 

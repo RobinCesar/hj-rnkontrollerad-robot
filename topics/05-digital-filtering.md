@@ -143,16 +143,84 @@ band-limited variance.
 * Cranking up the order to get a sharper cutoff and introducing ringing or instability.
 * Forgetting that `filtfilt` doubles the effective order.
 
-## Check yourself
+## Questions
 
-1. Why can you not use `sosfiltfilt` in a real-time loop?
-2. What specifically goes wrong if you epoch before filtering?
-3. You bandpass 8 to 30 Hz with `sosfiltfilt` and order 6. What is the effective order?
-4. Why is `output='sos'` preferred over `b, a`?
-5. You resample from 256 Hz to 64 Hz. What must happen first, and what happens if it
-   does not?
-6. Why might a non-causal filter make you believe in a pre-movement effect that is not
-   real?
+Write your answers in the boxes. See
+[the convention](README.md#answering-the-questions).
+
+**Q1.** Why can you not use `sosfiltfilt` in a real-time loop?
+*Source: this document. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q2.** What specifically goes wrong if you epoch before filtering?
+*Source: this document. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q3.** You bandpass 8 to 30 Hz with `sosfiltfilt` and order 6. What is the effective
+order?
+*Source: this document. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q4.** Why is `output='sos'` preferred over `b, a`?
+*Source: this document. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q5.** You resample from 256 Hz to 64 Hz. What must happen first, and what happens if
+it does not?
+*Source: this document. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q6.** Why might a non-causal filter make you believe in a pre-movement effect that is
+not real?
+*Source: this document. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q7.** Name the trade-off that filter order controls, in both directions. Why is order
+4 a sensible starting point rather than order 20?
+*Source: this document. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q8.** MNE's filtering tutorial explains the relationship between filter length,
+transition bandwidth and ringing. State it: what happens to the transition band as the
+filter gets longer, and what does that cost you in the time domain?
+*Source: MNE, "Background information on filtering". `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q9.** The same tutorial is emphatic about high-pass cutoffs. What does it say goes
+wrong when you high-pass above roughly 0.1 to 1 Hz, and why does that matter less for
+this project than for an ERP study?
+*Source: MNE, "Background information on filtering". `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q10.** What is a filter's impulse response, what is its frequency response, and what
+is the operation that connects them to the act of filtering a signal?
+*Source: Smith, "The Scientist and Engineer's Guide to DSP", ch. 14 to 21.
+`reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q11.** Smith frames the FIR vs. IIR choice as two different design goals rather than
+one being better. What are the two goals, and which one does your offline 8 to 30 Hz
+bandpass care about most?
+*Source: Smith, "The Scientist and Engineer's Guide to DSP". `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q12.** What does `scipy.signal.sosfilt_zi` return, and what do you multiply it by
+before using it on a real signal? Separately: what does `sosfreqz` let you check about a
+filter *before* you apply it to any data?
+*Source: scipy.signal reference. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
 
 ## Sources
 

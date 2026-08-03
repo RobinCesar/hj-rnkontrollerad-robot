@@ -157,14 +157,82 @@ understand it to understand why the alternatives are better.
 * Not checking for outlier trials before fitting. One artifact-laden trial can dominate
   the covariance estimate and wreck the filters.
 
-## Check yourself
+## Questions
 
-1. Why is variance the right feature after bandpass filtering to 8 to 30 Hz?
-2. What would CSP latch onto if you gave it unfiltered data?
-3. What is the difference between a CSP filter and a CSP pattern, and which do you plot?
-4. Why must CSP be fitted inside the cross-validation loop?
-5. Why does the log transform help LDA specifically?
-6. You have 4 channels. What is the maximum number of CSP components, and why?
+Write your answers in the boxes. See
+[the convention](README.md#answering-the-questions).
+
+**Q1.** Why is variance the right feature after bandpass filtering to 8 to 30 Hz?
+*Source: this document. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q2.** What would CSP latch onto if you gave it unfiltered data?
+*Source: this document. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q3.** What is the difference between a CSP filter and a CSP pattern, and which do you
+plot?
+*Source: this document. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q4.** Why must CSP be fitted inside the cross-validation loop?
+*Source: this document. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q5.** Why does the log transform help LDA specifically?
+*Source: this document. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q6.** You have 4 channels. What is the maximum number of CSP components, and why?
+*Source: this document. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q7.** CSP keeps the most extreme filters from each end of the eigenvalue spectrum and
+throws away the middle ones. What is different about the middle filters that makes them
+useless?
+*Source: this document. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q8.** In `mne.decoding.CSP`, what are the shapes of `filters_` and `patterns_`? What
+does the output shape become if you set `transform_into='csp_space'` instead of the
+default?
+*Source: MNE, `mne.decoding.CSP` API. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q9.** What values can `reg` take in `mne.decoding.CSP`, and what problem is
+regularisation solving? Given that you have 4 channels and maybe 60 trials, do you
+expect it to help much? Why?
+*Source: MNE, `mne.decoding.CSP` API. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q10.** What does the `component_order` parameter control, and what is the difference
+between `'mutual_info'` and `'alternate'`?
+*Source: MNE, `mne.decoding.CSP` API. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q11.** pyRiemann classifies covariance matrices rather than CSP features. What is the
+"tangent space", and why can you not simply flatten a covariance matrix and feed it to
+LDA directly?
+*Source: pyRiemann documentation. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q12.** Look up what accuracy MOABB reports for a CSP+LDA pipeline on a standard
+two-class motor imagery dataset. What number is "normal"? What do MOABB's
+within-session, cross-session and cross-subject evaluations each mean?
+*Source: MOABB documentation. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
 
 ## Sources
 

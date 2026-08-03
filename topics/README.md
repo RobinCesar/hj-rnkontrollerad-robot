@@ -23,6 +23,35 @@ For API calls and signatures, use [SYNTAX.md](../SYNTAX.md) instead.
 | 12 | [Game design for BCI](12-game-design.md) | 6 |
 | 13 | [Visualisation](13-visualisation.md) | 7 |
 
+## Answering the questions
+
+Every document ends in a `## Questions` section. The questions come from two places:
+
+* **This document**, i.e. things the explanation above should have taught you.
+* **The sources**, i.e. things you only find by actually opening the "Start here" and
+  "Go deeper" links. Those are marked with which source answers them. Nothing is drawn
+  from the "Papers" sections, so you can skip those until you want the depth.
+
+Each question looks like this:
+
+```
+**Q3.** Why does the Muse reference at FPz make eye artifacts appear on every channel?
+*Source: this document. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+```
+
+Replace `_(unanswered)_` with your answer, in your own words. Short is fine; the point
+is to find out whether you can reconstruct the reasoning, not to write an essay. Leave
+the `reviewed:` tag alone.
+
+**Getting them checked.** Ask Claude in any session to check your answers. It looks for
+questions that are answered but still tagged `reviewed: no`, marks each answer correct,
+partly correct or wrong with a short explanation, and then flips the tag to
+`reviewed: yes`. Questions already tagged `reviewed: yes` are skipped, so you can answer
+a few at a time and only pay for what is new. The full procedure is in
+[CLAUDE.md](../CLAUDE.md).
+
 ## Reading order if you only have time for four
 
 1. [Motor imagery and ERD](02-motor-imagery-erd.md), because it is the physical effect

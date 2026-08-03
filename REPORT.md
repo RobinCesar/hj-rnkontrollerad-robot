@@ -27,14 +27,26 @@ What the report should answer. Phrase them so they can be answered with a number
 clear yes/no.
 
 1. Is it possible to classify motor imagery (left vs. right hand) above chance level
-   with a 4-channel consumer EEG (Muse), where the electrodes do not cover
+   with a 4-channel consumer EEG (Muse 2), where the electrodes do not cover
    sensorimotor cortex?
 2. How much worse is the result compared to the same pipeline run on a research
    dataset with electrodes over C3/C4?
 3. How much of any performance comes from actual EEG, and how much from artifacts
-   (eyes, jaw clenching, muscles)?
+   (eyes, jaw clenching, muscles)? Answered by measuring deliberate eye and jaw control
+   through the identical pipeline, which gives the ceiling that non-neural control can
+   reach on this hardware.
 4. What latency and decision stability are needed for the game to feel controllable,
    and what does that cost in accuracy?
+5. How does a non-neural control signal (eye movement, jaw clench) compare with the
+   motor imagery signal on the same hardware, the same features and the same validation,
+   in accuracy, latency and effort? This is what makes the game playable, and it is the
+   reference point that makes question 3 answerable rather than rhetorical.
+
+> **On terminology:** eye and jaw control is **not** a BCI. Wolpaw's definition requires
+> the system to measure central nervous system activity and not to depend on peripheral
+> nerves and muscles. The eye/jaw condition is included as a measured comparison and as a
+> working game input, and the report must say so plainly wherever its numbers appear.
+> The BCI claim rests on the motor imagery condition alone.
 
 # C. Method
 
@@ -70,17 +82,33 @@ Classifier, cross-validation scheme, metrics, how data leakage is avoided.
 
 # D. Results
 
-## D.1 Baselines to compare against
-Without these, no result can be interpreted.
+## D.1 The ladder
 
-| Baseline | Value | Comment |
-|---|---|---|
-| Chance level (2 classes) | 50 % | |
-| Upper bound of chance (95 % CI, given N trials) | | Computed from the binomial distribution |
-| Permutation test (p-value) | | Labels shuffled, model retrained |
-| Same pipeline on a public dataset | | Shows the pipeline itself works |
-| Own Muse data, motor *execution* | | Easier task, sanity check |
-| Own Muse data, motor *imagery* | | The main result |
+Every row uses the **same** pipeline, features, cross-validation scheme and metrics.
+Only the data changes. That is what makes the rows comparable, and comparability is the
+entire point: no single number here means anything, the differences between them do.
+
+Ordered from "no signal by construction" to "signal that is definitely present":
+
+| # | Condition | Expected | Value | What it establishes |
+|---|---|---|---|---|
+| 0 | Chance level (2 balanced classes) | 50 % | | Reference point, not a threshold |
+| 1 | Binomial 95 % upper bound for your N | | | The number you must actually beat |
+| 2 | Permutation test on the real result | p | | Empirical significance, and a leakage detector |
+| 3 | Motor imagery, public 64-ch dataset | 70 to 90 % | | The pipeline itself works |
+| 4 | Same, restricted to Muse-like channels | | | What electrode placement costs, in points |
+| 5 | Motor imagery, own Muse data | 50 to 65 % | | **The main result** |
+| 6 | Motor execution, own Muse data | higher | | Recording and labelling chain works |
+| 7 | Rest vs. rest, own Muse data | 50 % | | Should be chance. If not, the setup leaks |
+| 8 | Deliberate eye/jaw control, own Muse | 95 %+ | | Ceiling of non-neural control on this hardware |
+
+**How to read rows 5 and 8 together.** Row 8 is what the hardware achieves when the
+signal is large, lateralised and unambiguous. If row 5 approaches row 8, the imagery
+result is almost certainly artifacts wearing a costume, and the controls in E.2 should
+find out which. If row 5 sits far below row 8 but above rows 0 to 2, that is a weak but
+credible neural result and it is the honest outcome this project is most likely to have.
+
+Row 8 is also the game's actual input source (see D.3 and section 12 of the topics).
 
 ## D.2 Results table
 
@@ -90,11 +118,18 @@ Without these, no result can be interpreted.
 
 ## D.3 Real-time performance
 
-| Metric | Value |
-|---|---|
-| Window length / update interval | |
-| Latency from cue to decision | |
-| Decision stability (switches per second at rest) | |
+Measured per input source, because they differ by an order of magnitude and quoting a
+single figure would be misleading.
+
+| Metric | Motor imagery | Eye/jaw |
+|---|---|---|
+| Window length / update interval | | |
+| Latency from intention to decision | | |
+| Decision stability (switches per second at rest) | | |
+| False activations per minute during intentional rest | | |
+| Information transfer rate (bits/min) | | |
+
+Which source the demo video uses, and why, belongs in section F.
 
 ## D.4 Figures
 * CSP patterns (topography or channel weights)
@@ -120,11 +155,22 @@ The frontal electrodes (AF7/AF8) pick up eye movements and blinks; the temporal 
 systematically followed by an eye movement or asymmetric muscle tension, the classifier
 can learn *that* instead of the motor cortex.
 
+This is not a hypothetical worry here, because row 8 of the ladder in D.1 measures
+exactly how well those artifacts classify on this hardware. That number is the ceiling
+the imagery result must be distinguished from.
+
 Controls to run:
 * Inspect which frequencies and channels the CSP filters weight most heavily
   (EMG above 30 Hz, EOG below 4 Hz).
+* Compare class-average power spectra above 30 Hz. Any class difference there is muscle.
+* Rerun the pipeline narrowband, 8 to 13 Hz only. Cheapest and most informative control,
+  because there is very little EMG below 13 Hz. Do this one first.
 * Compare results with and without artifact removal.
-* Run a control session where eyes and jaw are deliberately kept still.
+* Run a control session where eyes and jaw are deliberately kept still, with a central
+  fixation cross and blinking restricted to the rest periods.
+* Compare the imagery CSP patterns against the eye/jaw CSP patterns from row 8. If they
+  weight the same channels in the same way, the two conditions are measuring the same
+  thing and the imagery claim fails.
 
 ## E.3 How would better hardware improve the result?
 The Muse has 4 channels; research equipment has 32 to 64, with electrodes over

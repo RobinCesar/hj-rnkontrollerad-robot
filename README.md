@@ -7,14 +7,21 @@ that classification to control in a game.
 The goal is twofold: a working real-time system, and a written report
 ([REPORT.md](REPORT.md)) documenting method, results and limitations.
 
+The same pipeline is also run on a **deliberate eye/jaw control** condition. That is not
+a BCI, since it depends on eye and jaw muscles rather than on brain activity, and it is
+labelled as such throughout. It serves two purposes: it measures the ceiling that
+non-neural control reaches on this hardware, which is what the motor imagery result has
+to be distinguished from, and it gives the game an input source that reliably works.
+See [REPORT.md](REPORT.md#d1-the-ladder) for how the conditions compare.
+
 ## Hardware
 
 | | |
 |---|---|
-| Headset | Muse (BrainFlow-supported models: Muse 2016 / Muse 2 / Muse S) |
+| Headset | **Muse 2** |
 | Channels | 4 EEG: **TP9, AF7, AF8, TP10** (reference FPz) |
 | Sampling rate | 256 Hz |
-| Connection | Bluetooth LE, via BrainFlow |
+| Connection | Bluetooth LE, via BrainFlow (`MUSE_2_BOARD` = 38 native, `MUSE_2_BLED_BOARD` = 22 with the BLED112 dongle) |
 
 > **Important limitation:** the Muse electrodes sit temporally and frontally, not over
 > sensorimotor cortex (C3/C4/Cz) where mu/beta ERD during hand movement is strongest.
@@ -40,6 +47,10 @@ The goal is twofold: a working real-time system, and a written report
    In real time: a sliding window of 1:2 s updated every 250 ms, where each window is
    classified separately and the decisions are smoothed over time.
 6. **Game control.** The output is mapped to movement in the game (game not chosen yet).
+   The game reads one input interface with four interchangeable sources behind it:
+   keyboard, replay of recorded data, the eye/jaw classifier and the motor imagery
+   classifier. The game itself never imports BrainFlow or sklearn, so it can be built
+   and tested without the headset. The active source is always shown on screen.
 7. **Visualisation.** Real-time plots of the signal, band power and classifier
    confidence, plus topographies and weights for the CSP components.
 8. **Report.** Running notes in [REPORT.md](REPORT.md).

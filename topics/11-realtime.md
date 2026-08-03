@@ -184,16 +184,83 @@ takes twenty minutes to write.
 * Going straight to the game without a debug view.
 * Not releasing the board session on exit.
 
-## Check yourself
+## Questions
 
-1. Why is `sosfiltfilt` impossible in a real-time loop?
-2. What happens if you filter each 2 s window independently, and what are two fixes?
-3. Why must the training epoch length match the runtime window length?
-4. Your offline accuracy is 72 % and live performance feels random. List four things to
-   check, in order.
-5. Why is optimising the CSP computation a waste of time here?
-6. With W=2 s and S=250 ms, how much data do two consecutive windows share, and why does
-   that matter for measuring information transfer rate?
+Write your answers in the boxes. See
+[the convention](README.md#answering-the-questions).
+
+**Q1.** Why is `sosfiltfilt` impossible in a real-time loop?
+*Source: this document. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q2.** What happens if you filter each 2 s window independently, and what are two
+fixes?
+*Source: this document. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q3.** Why must the training epoch length match the runtime window length?
+*Source: this document. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q4.** Your offline accuracy is 72 % and live performance feels random. List four
+things to check, in order.
+*Source: this document. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q5.** Why is optimising the CSP computation a waste of time here?
+*Source: this document. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q6.** With W=2 s and S=250 ms, how much data do two consecutive windows share, and why
+does that matter for measuring information transfer rate?
+*Source: this document. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q7.** Go through the latency budget table and add it up for a system with W=2 s and a
+smoothing lag of 500 ms. Which single component is the largest, and is it something you
+can engineer away?
+*Source: this document. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q8.** In `scipy.signal.sosfilt`, what does the `zi` argument represent physically, what
+does the function return when you pass it, and what shape must `zi` have for an SOS
+filter with `n` sections?
+*Source: scipy.signal reference. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q9.** What is the difference between `Queue.get()` and `Queue.get_nowait()`? If you set
+`maxsize` and your acquisition thread produces faster than your classifier consumes, what
+happens on `put()`, and which behaviour do you actually want for EEG?
+*Source: Python `queue` documentation. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q10.** What does `threading.Event` give you that a plain boolean flag does not, and
+which of its methods would you use to make an acquisition thread exit cleanly?
+*Source: Python `threading` documentation. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q11.** OpenViBE documents its online processing chain as a sequence of boxes. What are
+the stages between acquisition and output, and what is an "epoching" box doing in a
+system that has no cues to epoch around?
+*Source: OpenViBE documentation. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q12.** What is LSL's `local_clock()`, and how does LSL deal with two machines whose
+clocks disagree? Why is that harder than just timestamping on arrival?
+*Source: Lab Streaming Layer documentation. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
 
 ## Sources
 

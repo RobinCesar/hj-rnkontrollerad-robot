@@ -128,15 +128,77 @@ If rejection leaves you imbalanced, either subsample the majority class or use
 * Not checking `X.shape` after epoching. The number of trials should equal the number
   of cues you delivered, minus rejections. If it does not, stop and find out why.
 
-## Check yourself
+## Questions
 
-1. You epoch -0.5 to 3.5 s at 256 Hz. What is the shape of one epoch?
-2. Why is including the cue onset in the analysis window a problem for a left/right
-   task specifically?
-3. Why does baseline correction matter less for CSP than for ERP analysis?
-4. You delivered 80 cues but `X.shape[0]` is 78. Name two possible causes.
-5. Your rejection step removes 25 % of one class and 4 % of the other. What are the two
-   separate problems this creates?
+Write your answers in the boxes. See
+[the convention](README.md#answering-the-questions).
+
+**Q1.** You epoch -0.5 to 3.5 s at 256 Hz. What is the shape of one epoch?
+*Source: this document. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q2.** Why is including the cue onset in the analysis window a problem for a left/right
+task specifically?
+*Source: this document. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q3.** Why does baseline correction matter less for CSP than for ERP analysis?
+*Source: this document. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q4.** You delivered 80 cues but `X.shape[0]` is 78. Name two possible causes.
+*Source: this document. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q5.** Your rejection step removes 25 % of one class and 4 % of the other. What are the
+two separate problems this creates?
+*Source: this document. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q6.** The recommended approach is to epoch generously and crop afterwards rather than
+epoching straight to the analysis window. What does that buy you?
+*Source: this document. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q7.** In MNE's `Epochs`, what is the difference between `reject`, `flat` and
+`drop_bad()`, and how do you find out afterwards *why* a particular epoch was dropped?
+*Source: MNE, "The Epochs data structure". `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q8.** What does `epochs.get_data()` return, in shape and in units? What does
+`preload=True` change about when the data is actually read?
+*Source: MNE, "The Epochs data structure". `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q9.** MNE has two different ways of representing events: `Annotations` and the
+`(n_events, 3)` events array. What is the difference, and which functions convert
+between them?
+*Source: MNE, "Parsing events from raw data". `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q10.** MNE's CSP decoding example constructs its `Epochs` with `baseline=None`. Given
+what this document says about baseline correction and variance, why is that a defensible
+choice there?
+*Source: MNE, "Decoding motor imagery with CSP". `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q11.** Luck warns that a baseline period which is too short causes problems of its
+own. What goes wrong, and how does that interact with the variable rest period this
+project's protocol uses?
+*Source: Luck, "An Introduction to the ERP Technique", epoching and baseline chapters.
+`reviewed: no`*
+
+> **Answer:** _(unanswered)_
 
 ## Sources
 

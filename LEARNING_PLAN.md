@@ -174,11 +174,35 @@ Muse-like electrode placement costs.
 * [ ] Record at least 40 trials per class, preferably 60, split into blocks with breaks.
 * [ ] Run your Phase 3 pipeline on your own data, unchanged.
 * [ ] Move on to motor imagery and compare.
-* [ ] Run the artifact control experiments from REPORT.md section E.2. The narrowband
-      8:13 Hz rerun is the cheapest and most informative; do that one first.
+* [ ] **Record the eye/jaw condition** (ladder row 8 in REPORT.md D.1): same protocol,
+      same trial count, same cues, but instead of imagining, deliberately glance left or
+      right, or clench the left or right side of the jaw. Pick one and be consistent, and
+      say which in the method section.
+
+      This is the most useful hour of recording in the project, for three reasons. It
+      measures the ceiling that non-neural control reaches on this hardware, which is the
+      number your imagery result has to be distinguished from. It gives you a condition
+      where you *know* the answer, so a failure here means the code is broken rather than
+      the signal being absent. And it becomes the game's working input source in Phase 6.
+
+      Run it through the pipeline completely unchanged. Do not tune anything for it.
+* [ ] Compare the CSP patterns from the imagery condition against those from the eye/jaw
+      condition. If they weight the same channels the same way, your imagery result is
+      the artifact result and you have to say so.
+* [ ] Run the remaining artifact control experiments from REPORT.md section E.2. The
+      narrowband 8:13 Hz rerun is the cheapest and most informative; do that one first.
 * [ ] Record a second session on a different day. Train on session 1, test on session 2.
       The difference from within-session CV is an important result.
 * [ ] Keep a written session log: date, electrode issues, how you felt, anything odd.
+
+**On the eye/jaw condition and honesty**
+
+It will score far higher than the imagery condition, and it will be tempting to let that
+number represent the project. It does not. Eye and jaw control depends on peripheral
+muscles, so by Wolpaw's definition it is not a BCI at all. Label it as what it is
+wherever it appears, in the report, in the README and in any demo. The comparison is
+the contribution; passing it off as the BCI result would be the one thing that could
+make an otherwise good project worthless.
 
 **Pitfalls**
 * If accuracy on Muse data looks suspiciously high (above 90 %), hunt for artifacts
@@ -186,8 +210,9 @@ Muse-like electrode placement costs.
 * Fatigue degrades the signal, so split the recording into blocks with breaks.
 * An accuracy of 58 % on 60 trials is not a result. Check it against the chance bound.
 
-**Done when:** you have your own data, a trained model, and an honest number backed by a
-permutation test and the artifact controls.
+**Done when:** rows 5 to 8 of the ladder in REPORT.md D.1 have numbers in them, each
+backed by a permutation test, and you can say in one sentence what the gap between row 5
+and row 8 means.
 
 # Phase 5: Real time
 
@@ -208,6 +233,12 @@ permutation test and the artifact controls.
 * [ ] Measure actual latency and loop rate. Write it into REPORT.md D.3.
 * [ ] Plot false-activation rate against response time for several smoothing settings.
 * [ ] Build a neutral test display (a bar or a dot) before the game.
+* [ ] **Bring the loop up against the eye/jaw model first.** Deliberately clenching or
+      glancing gives you an input you can produce on demand and verify by eye, so a
+      motionless bar means a broken loop rather than an ambiguous result. Only once that
+      is solid should you load the imagery model. This is the fastest way to separate
+      "the real-time chain is wrong" from "the signal is not there", which are otherwise
+      indistinguishable and are the two hypotheses you will be stuck between.
 
 **Pitfalls**
 * Real-time data must be processed **exactly** like the training data. This is the
@@ -223,18 +254,36 @@ permutation test and the artifact controls.
 
 **Do**
 * [ ] Choose the game. It must tolerate ~2.5 s latency, ~70 % accuracy and one binary
-      axis. The auto-forward maze is probably the best fit.
-* [ ] Define one input interface, then implement three sources behind it: keyboard,
-      recorded-data replay, and live classifier. The game must never import BrainFlow.
+      axis. The auto-forward maze is probably the best fit. Design it for the *worst*
+      input source, i.e. motor imagery, so that the better ones feel comfortable rather
+      than the other way round.
+* [ ] Define one input interface, then implement **four** sources behind it. The game
+      must never import BrainFlow, sklearn or scipy:
+      1. **Keyboard**, for building the game at all.
+      2. **Replay** of recorded data through the live pipeline, for deterministic
+         testing with no hardware.
+      3. **Eye/jaw classifier**, the reliable source. This is what a demo uses and what
+         makes the game genuinely playable.
+      4. **Motor imagery classifier**, the experimental source.
+      Sources 3 and 4 differ only in which trained model is loaded, so this is one
+      implementation, not two.
 * [ ] Build the game with **keyboard control first**. Make it fun without EEG.
 * [ ] Add the replay source. It gives you a deterministic test of the whole live chain
       with no hardware, and it is the most useful debugging tool in the project.
-* [ ] Switch in the live classifier.
+* [ ] Switch in the eye/jaw classifier. Getting the live chain working against a large,
+      reliable signal first means that when you swap in motor imagery and it behaves
+      badly, you know the problem is the signal and not the plumbing.
+* [ ] Switch in the motor imagery classifier and compare how the game feels.
+* [ ] Make the active source **visible on screen at all times**, and label the eye/jaw
+      source as non-neural. A demo that does not say which source is driving it is
+      dishonest even if the code is fine.
 * [ ] Add a calibration phase at the start that records training data.
 * [ ] Display confidence to the player. This is required, not decorative.
-* [ ] Log every session: time to target, path efficiency, false activations.
+* [ ] Log every session: time to target, path efficiency, false activations. Log the
+      source too, so the numbers in REPORT.md D.3 can be split by source.
 
-**Done when:** the game is playable with keyboard, with replay, and with your brain.
+**Done when:** the game is playable with keyboard, with replay, with eye/jaw, and with
+motor imagery, and the on-screen label always says which.
 
 # Phase 7: Visualisation
 
@@ -251,6 +300,12 @@ them into report-quality figures.
 * [ ] Time-frequency plot showing ERD across the trial, baseline-normalised.
       Do it for C3/C4 on the public data and TP9/TP10 on yours, side by side.
 * [ ] CSP patterns (topography for the public data, bar chart for the Muse).
+* [ ] **CSP patterns for imagery and for eye/jaw, side by side, same axes.** If the two
+      bar charts look alike, that is the single most important figure in the report and
+      it is a negative result. If they differ clearly, it is the strongest evidence you
+      have that the imagery condition is measuring something else.
+* [ ] The ladder from REPORT.md D.1 as one bar chart, with the chance bound drawn as a
+      horizontal line across it. This is the figure that summarises the whole project.
 * [ ] Confusion matrix, learning curve, permutation null distribution.
 * [ ] Go back and fix axis labels, units, event markers and colormaps on all of them.
 

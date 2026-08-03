@@ -121,14 +121,81 @@ the single most important fact about this project.
 * Expecting to see anything meaningful in a single trial. EEG needs repetition and
   averaging (or a good classifier) to pull signal out of noise.
 
-## Check yourself
+## Questions
 
-1. Why does a single neuron's firing not show up in EEG?
-2. Your Muse data has values around 15000. What went wrong?
-3. Which hemisphere's motor cortex controls your left hand, and which 10-20 electrode
-   sits over it?
-4. Why might an eye blink appear on TP9, which is behind your ear?
-5. What is the difference between alpha and mu?
+Write your answers in the boxes. See
+[the convention](README.md#answering-the-questions).
+
+**Q1.** Why does a single neuron's firing not show up in EEG?
+*Source: this document. `reviewed: no`*
+
+> **Answer:** The EEG measures the summed response of many neurons, a single neurons
+> firing would just drown in the noise of the others so you cant accurately predict it
+
+**Q2.** Your Muse data has values around 15000. What went wrong?
+*Source: this document. `reviewed: no`*
+
+> **Answer:** Mixed up volts and microvolts?
+
+**Q3.** Which hemisphere's motor cortex controls your left hand, and which 10-20
+electrode sits over it?
+*Source: this document. `reviewed: no`*
+
+> **Answer:** C4, right hemisphere
+
+**Q4.** Why might an eye blink appear on TP9, which is behind your ear?
+*Source: this document. `reviewed: no`*
+
+> **Answer:** Everything is measured against the reference, in this case FPz which is
+> close to the eyes. The eyes send a significantly stronger signal then the one from
+> the brain, so it can be confused with the reference signal
+
+**Q5.** What is the difference between alpha and mu?
+*Source: this document. `reviewed: no`*
+
+> **Answer:** mu responds to movement contra alpha responding to vision, and it is over
+> the sensorimotor cortex
+
+**Q6.** Two conditions must hold for neural activity to be visible at the scalp at all.
+Name both, and say which one ERD depends on.
+*Source: this document. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q7.** MNE has three central data objects for continuous, segmented and averaged data.
+Name them and say what each one holds.
+*Source: MNE, "Overview of MEG/EEG analysis". `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q8.** According to BrainFlow's "Supported Boards" page, what does the Muse board
+provide besides the four EEG channels, and what do you have to do before those extra
+channels appear in the data matrix?
+*Source: BrainFlow, "Supported Boards". `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q9.** The skull is a much poorer conductor than the scalp and the brain. What does
+that difference do to a cortical source on its way to the electrode, and why does it
+mean an electrode cannot be said to measure "the cortex underneath it"?
+*Source: Malmivuo & Plonsey, "Bioelectromagnetism", ch. 13 to 14. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q10.** EEG and fMRI measure brain activity with opposite strengths. What does EEG buy
+you, and what does it give up? Relate your answer to why this project needs repeated
+trials.
+*Source: Cohen, "Analyzing Neural Time Series Data", ch. 1 to 5. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q11.** Luck argues that there is no such thing as a neutral reference, including the
+average reference. Why not, and what does that imply about comparing your Muse results
+with a published study that used linked mastoids?
+*Source: Luck, "An Introduction to the ERP Technique", ch. 1 and the electrical basics
+appendix. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
 
 ## Sources
 

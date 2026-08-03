@@ -165,15 +165,77 @@ Decide the format in Phase 1 and never change it.
 * Storing only processed data and losing the ability to reprocess.
 * Forgetting `release_session()`.
 
-## Check yourself
+## Questions
 
-1. Your ring buffer is 45000 samples and you sample at 256 Hz. How long can you go
-   between reads?
-2. Why is `get_current_board_data()` the right call for the real-time loop?
-3. How would you find the sample index of the third "left" cue in a recording?
-4. Design a procedure to measure your cue-to-marker latency to within 50 ms.
-5. Why would a 400 ms timing error be much worse than a 40 ms one, given a 3 s analysis
-   window?
+Write your answers in the boxes. See
+[the convention](README.md#answering-the-questions).
+
+**Q1.** Your ring buffer is 45000 samples and you sample at 256 Hz. How long can you go
+between reads?
+*Source: this document. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q2.** Why is `get_current_board_data()` the right call for the real-time loop?
+*Source: this document. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q3.** How would you find the sample index of the third "left" cue in a recording?
+*Source: this document. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q4.** Design a procedure to measure your cue-to-marker latency to within 50 ms.
+*Source: this document. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q5.** Why would a 400 ms timing error be much worse than a 40 ms one, given a 3 s
+analysis window?
+*Source: this document. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q6.** Of the delay sources listed in the timing table, which can you compensate for
+after the fact and which can you not? What do you do with the ones you cannot?
+*Source: this document. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q7.** What do `prepare_session()`, `start_stream()` and `release_session()` each do,
+and in what order must they be called? What are the two arguments to `start_stream()`
+for?
+*Source: BrainFlow, User API. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q8.** `BoardShim` has a family of static query methods. Name four of them besides
+`get_eeg_channels`, and say what each returns. Why are they static rather than instance
+methods?
+*Source: BrainFlow, User API. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q9.** Find the Muse 2 entry on the Supported Boards page. What is the board ID for
+native BLE, what is required to make native BLE work on Linux, and what does the page
+say you must do to get PPG or accelerometer data?
+*Source: BrainFlow, "Supported Boards". `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q10.** In BrainFlow's code samples, which calls write data to a file and read it back,
+and what does the written file actually contain compared to the array you had in memory?
+*Source: BrainFlow, Code Samples. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q11.** LSL exists to solve the timing problem properly. What does it do that a
+timestamp applied when the packet arrives at your computer cannot do, and what would you
+need in your setup to benefit from it?
+*Source: Lab Streaming Layer documentation. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
 
 ## Sources
 

@@ -155,15 +155,84 @@ paragraph in the report:
 * Not writing down what happened during the session. "TP10 was loose for the first
   block" is invaluable three weeks later and impossible to reconstruct.
 
-## Check yourself
+## Questions
 
-1. Why does imagery start 0.5 s after the cue rather than at it?
-2. Why must the rest period vary in length?
-3. Your cue is an arrow at the left or right edge of the screen. What is the confound,
-   and what are two fixes?
-4. Why is 20 trials per class not enough? (See [09](09-validation.md).)
-5. Why record two sessions on different days rather than one long session?
-6. What should you write down during a recording session that is not in the data file?
+Write your answers in the boxes. See
+[the convention](README.md#answering-the-questions).
+
+**Q1.** Why does imagery start 0.5 s after the cue rather than at it?
+*Source: this document. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q2.** Why must the rest period vary in length?
+*Source: this document. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q3.** Your cue is an arrow at the left or right edge of the screen. What is the
+confound, and what are two fixes?
+*Source: this document. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q4.** Why is 20 trials per class not enough? (See [09](09-validation.md).)
+*Source: this document. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q5.** Why record two sessions on different days rather than one long session?
+*Source: this document. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q6.** What should you write down during a recording session that is not in the data
+file?
+*Source: this document. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q7.** Why must the rest period be at least three seconds rather than two? Name the
+specific physiological effect that sets the lower bound.
+*Source: this document. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q8.** Open the BCI Competition IV dataset 2a description and write out the exact Graz
+trial timing it specifies: when the fixation cross appears, when the cue appears and for
+how long, when imagery ends, and how long the break is. How many trials per class per
+session, and how many sessions per subject?
+*Source: BCI Competition IV. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q9.** Dataset 2a recorded 22 EEG channels and 3 additional EOG channels. Why did they
+bother recording EOG separately, and what does that tell you about a limitation of your
+own protocol?
+*Source: BCI Competition IV. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q10.** The PhysioNet EEG Motor Movement/Imagery protocol alternates task and rest
+differently from the Graz paradigm. Describe its run structure, and name one thing it
+does that you would *not* want to copy for a left/right classification study.
+*Source: PhysioNet, EEG Motor Movement/Imagery Dataset. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q11.** Wolpaw & Wolpaw describe a set of components that every BCI has in common. List
+them, and say where "the user learning to control the system" fits into that picture.
+*Source: Wolpaw & Wolpaw, "Brain-Computer Interfaces: Principles and Practice",
+experimental design and evaluation chapters. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q12.** Read the dataset descriptions for three different motor imagery datasets in
+MOABB. List what varies between their protocols (trial length, cue modality, number of
+sessions, number of classes) and what is the same in all three.
+*Source: MOABB documentation. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
 
 ## Sources
 

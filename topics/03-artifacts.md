@@ -140,15 +140,78 @@ The narrowband rerun is cheap and powerful. Do it early.
 * Cleaning artifacts differently in training and in real time, so the classifier sees a
   different data distribution when you actually play.
 
-## Check yourself
+## Questions
 
-1. Why does an 8 to 30 Hz bandpass filter fail to remove jaw EMG?
-2. You see a sharp peak at exactly 50 Hz. What is it, and does it threaten your result?
-3. Why is horizontal eye movement a particularly bad confound for *this* classification
-   task specifically?
-4. Why is ICA a poor fit for a 4-channel headset?
-5. Design an experiment that would prove your classifier is reading muscles rather than
-   brain.
+Write your answers in the boxes. See
+[the convention](README.md#answering-the-questions).
+
+**Q1.** Why does an 8 to 30 Hz bandpass filter fail to remove jaw EMG?
+*Source: this document. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q2.** You see a sharp peak at exactly 50 Hz. What is it, and does it threaten your
+result?
+*Source: this document. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q3.** Why is horizontal eye movement a particularly bad confound for *this*
+classification task specifically?
+*Source: this document. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q4.** Why is ICA a poor fit for a 4-channel headset?
+*Source: this document. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q5.** Design an experiment that would prove your classifier is reading muscles rather
+than brain.
+*Source: this document. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q6.** Real beta and EMG both put power in the 20 to 30 Hz range. What is the shape
+difference between them in a power spectrum, and how do you use it as a diagnostic?
+*Source: this document. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q7.** MNE's ICA tutorial recommends high-pass filtering at around 1 Hz before fitting
+ICA, higher than you would use for the analysis itself. What is the reason, and what do
+you do with the ICA solution afterwards so the analysis is not stuck with a 1 Hz
+high-pass?
+*Source: MNE, "Repairing artifacts with ICA". `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q8.** The same tutorial uses `find_bads_eog` to identify eye components automatically.
+What does that function need in the recording, and why can you not use it on Muse data?
+*Source: MNE, "Repairing artifacts with ICA". `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q9.** What does marking a channel as "bad" actually do to it in MNE, and what does
+`interpolate_bads()` do? Why is interpolation not available to you on a Muse?
+*Source: MNE, "Handling bad channels". `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q10.** In Makoto's preprocessing pipeline, in what order do high-pass filtering, line
+noise removal, bad channel rejection and ICA appear, and what is the stated reason for
+high-passing before ICA rather than after?
+*Source: Makoto's preprocessing pipeline. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q11.** Luck distinguishes artifact *rejection* from artifact *correction*. State the
+difference, give the argument he makes for each, and say which one this project uses and
+why.
+*Source: Luck, "An Introduction to the ERP Technique", artifact chapter. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
 
 ## Sources
 

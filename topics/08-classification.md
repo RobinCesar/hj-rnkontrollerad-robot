@@ -130,15 +130,83 @@ easily with imbalanced data.
 * Reporting only accuracy without the confusion matrix or the class balance.
 * Using hard labels in real time when probabilities would let you smooth and abstain.
 
-## Check yourself
+## Questions
 
-1. Why is LDA a better fit than a random forest for 60 trials and 4 features?
-2. What does shrinkage do, and why does it matter more with more features?
-3. Which classifiers need feature scaling and which do not?
-4. Why is `predict_proba` more useful than `predict` for the game?
-5. You get 70 % accuracy. What does the confusion matrix tell you that accuracy does not?
-6. Why is tuning `C` on your cross-validation score and then reporting that score
-   dishonest, and what is the fix?
+Write your answers in the boxes. See
+[the convention](README.md#answering-the-questions).
+
+**Q1.** Why is LDA a better fit than a random forest for 60 trials and 4 features?
+*Source: this document. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q2.** What does shrinkage do, and why does it matter more with more features?
+*Source: this document. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q3.** Which classifiers need feature scaling and which do not?
+*Source: this document. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q4.** Why is `predict_proba` more useful than `predict` for the game?
+*Source: this document. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q5.** You get 70 % accuracy. What does the confusion matrix tell you that accuracy
+does not?
+*Source: this document. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q6.** Why is tuning `C` on your cross-validation score and then reporting that score
+dishonest, and what is the fix?
+*Source: this document. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q7.** What are the two assumptions LDA makes about the class distributions, and which
+step of the CSP feature extraction was chosen partly to make one of them hold?
+*Source: this document. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q8.** What assumption does QDA drop compared with LDA, and what does that cost you in
+number of parameters to estimate? Why is that a bad trade at 60 trials?
+*Source: scikit-learn, "Linear and Quadratic Discriminant Analysis". `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q9.** Which `LinearDiscriminantAnalysis` solvers support `shrinkage`, and which one
+also supports `transform()` for dimensionality reduction? What happens if you pass
+`shrinkage='auto'` with the default solver?
+*Source: scikit-learn, "Linear and Quadratic Discriminant Analysis". `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q10.** The "Tips on Practical Use" section of the SVM page gives a specific
+recommendation about `C` when your data is noisy. What is it, and which direction does
+it push `C`?
+*Source: scikit-learn, "Support Vector Machines". `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q11.** What is the difference between `Pipeline` and `make_pipeline`? If your pipeline
+step is named `csp`, how do you refer to its `n_components` parameter inside a
+`GridSearchCV` parameter grid?
+*Source: scikit-learn, "Pipelines and composite estimators". `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q12.** LDA and logistic regression both produce a linear decision boundary of the same
+functional form. What is actually different between them, and why does that difference
+matter more when you have very few trials?
+*Source: Hastie, Tibshirani & Friedman, "The Elements of Statistical Learning", ch. 4.
+`reviewed: no`*
+
+> **Answer:** _(unanswered)_
 
 ## Sources
 

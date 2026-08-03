@@ -163,15 +163,75 @@ collect: log every session.
 * Spending more time on graphics than on the BCI, which is the part that is actually
   hard and actually interesting to an employer.
 
-## Check yourself
+## Questions
 
-1. Given 2.5 s latency and 70 % accuracy, why is a reflex-based game impossible?
-2. Why map probability to velocity rather than triggering a move at threshold?
-3. Why must the game be playable with a keyboard?
-4. What is a replay input source and why is it the most useful thing to build in Phase 6?
-5. Why does showing confidence to the player affect their actual performance, not just
-   their understanding?
-6. Which metric would let you compare your game against published BCI systems?
+Write your answers in the boxes. See
+[the convention](README.md#answering-the-questions).
+
+**Q1.** Given 2.5 s latency and 70 % accuracy, why is a reflex-based game impossible?
+*Source: this document. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q2.** Why map probability to velocity rather than triggering a move at threshold?
+*Source: this document. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q3.** Why must the game be playable with a keyboard?
+*Source: this document. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q4.** What is a replay input source and why is it the most useful thing to build in
+Phase 6?
+*Source: this document. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q5.** Why does showing confidence to the player affect their actual performance, not
+just their understanding?
+*Source: this document. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q6.** Which metric would let you compare your game against published BCI systems?
+*Source: this document. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q7.** Why does the auto-forward maze need a minimum junction spacing, and how would
+you compute that spacing from your measured latency?
+*Source: this document. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q8.** What are the four steps of a minimal pygame program's main loop? What does
+`pygame.display.flip()` do, and when would you use `update()` instead?
+*Source: pygame documentation and the introductory tutorial. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q9.** What does `clock.tick(60)` return, and how do you use that return value to make
+movement independent of frame rate? Write the one-line update expression.
+*Source: pygame documentation. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q10.** What does a `pygame.sprite.Group` do for you, and what does a sprite's
+`update()` method conventionally contain? Why is `Group.draw()` easier than blitting
+each object yourself?
+*Source: pygame, "Sprite module introduction". `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q11.** Find a consumer-EEG game project through NeuroTechX or the OpenBCI community.
+What control signal did it actually use: motor imagery, alpha power, blinks, or jaw
+clenches? What does the answer suggest about which signals are genuinely reliable on
+four channels?
+*Source: NeuroTechX, OpenBCI community. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
 
 ## Sources
 

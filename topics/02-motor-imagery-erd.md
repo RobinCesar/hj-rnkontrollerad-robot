@@ -121,14 +121,78 @@ testing a second subject are how you address it.
 * Assuming a null result means the method is broken, when it may be the subject or the
   hardware.
 
-## Check yourself
+## Questions
 
-1. Why does cortical activation *reduce* EEG amplitude?
-2. You see strong ERD at C4. Which hand was the subject imagining?
-3. What is the beta rebound and when does it occur?
-4. Why is left vs. right classification a spatial problem rather than a spectral one?
-5. You get 95 % accuracy on motor execution data from the Muse. What are the two
-   competing explanations, and how would you tell them apart?
+Write your answers in the boxes. See
+[the convention](README.md#answering-the-questions).
+
+**Q1.** Why does cortical activation *reduce* EEG amplitude?
+*Source: this document. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q2.** You see strong ERD at C4. Which hand was the subject imagining?
+*Source: this document. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q3.** What is the beta rebound and when does it occur?
+*Source: this document. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q4.** Why is left vs. right classification a spatial problem rather than a spectral
+one?
+*Source: this document. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q5.** You get 95 % accuracy on motor execution data from the Muse. What are the two
+competing explanations, and how would you tell them apart?
+*Source: this document. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q6.** What is the practical difference between kinaesthetic and visual motor imagery,
+and what exactly would you say to a subject to get the first one?
+*Source: this document. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q7.** In the PhysioNet EEG Motor Movement/Imagery dataset, which run numbers contain
+*imagined* left vs. right fist movement, and what do the annotation codes T0, T1 and T2
+mean in those runs?
+*Source: PhysioNet, EEG Motor Movement/Imagery Dataset. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q8.** How many subjects, channels and samples per second does that dataset have, and
+how long is a single task period? You will need all four numbers in Phase 3.
+*Source: PhysioNet, EEG Motor Movement/Imagery Dataset. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q9.** In MNE's "Decoding motor imagery with CSP" example, which frequency band and
+which `tmin`/`tmax` are used, and what classification accuracy does the page report?
+*Source: MNE, "Decoding motor imagery with CSP". `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q10.** Wolpaw's definition of a BCI has a criterion that deliberately excludes systems
+driven by muscle activity. State the criterion, and explain what it means for a Muse
+result that turns out to be driven by jaw EMG.
+*Source: Wolpaw & Wolpaw, "Brain-Computer Interfaces: Principles and Practice",
+sensorimotor rhythm chapters. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q11.** Find one motor imagery project built on a consumer 4-channel headset (start
+from NeuroTechX). What accuracy did they claim, and did they compare it against a chance
+level computed for their trial count? What does that tell you about the numbers you will
+see quoted online?
+*Source: NeuroTechX. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
 
 ## Sources
 

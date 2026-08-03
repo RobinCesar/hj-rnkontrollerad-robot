@@ -165,15 +165,83 @@ Since these go in a report:
 * Using matplotlib inside the real-time loop and wondering why the game stutters.
 * Unlabelled axes and missing units.
 
-## Check yourself
+## Questions
 
-1. Why does Welch's method give a cleaner spectrum than a single FFT?
-2. You plot time-frequency power and see only a smooth gradient with nothing
-   event-related. What did you forget?
-3. What in a power spectrum tells you that you have muscle contamination?
-4. Why is a 4-channel topomap misleading?
-5. What does a learning curve tell you about how long your game's calibration should be?
-6. Why is a diverging colormap the right choice for baseline-relative power change?
+Write your answers in the boxes. See
+[the convention](README.md#answering-the-questions).
+
+**Q1.** Why does Welch's method give a cleaner spectrum than a single FFT?
+*Source: this document. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q2.** You plot time-frequency power and see only a smooth gradient with nothing
+event-related. What did you forget?
+*Source: this document. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q3.** What in a power spectrum tells you that you have muscle contamination?
+*Source: this document. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q4.** Why is a 4-channel topomap misleading?
+*Source: this document. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q5.** What does a learning curve tell you about how long your game's calibration
+should be?
+*Source: this document. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q6.** Why is a diverging colormap the right choice for baseline-relative power change?
+*Source: this document. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q7.** Which single plot should you look at before analysing any recording at all, and
+what four specific problems are you looking for in it?
+*Source: this document. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q8.** MNE's time-frequency plotting supports several baseline `mode` values
+(`'percent'`, `'ratio'`, `'logratio'`, `'zscore'`, `'mean'`). Pick three and say exactly
+what arithmetic each one does to the power values.
+*Source: MNE, "Frequency and time-frequency sensor analysis". `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q9.** In a Morlet wavelet analysis, what does `n_cycles` control? What goes wrong if
+you set it very low, and what goes wrong if you set it very high? Connect this to the
+time-frequency trade-off.
+*Source: MNE, "Frequency and time-frequency sensor analysis". `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q10.** In `scipy.signal.welch`, what do `nperseg`, `noverlap` and `window` control?
+Write the formula relating `nperseg` and `fs` to the frequency resolution, and compute it
+for `fs=256, nperseg=512`.
+*Source: scipy.signal reference. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q11.** Cohen distinguishes total power, evoked power and induced power. Define all
+three, and say which one ERD is. Why does averaging the raw voltage across trials before
+computing power destroy the effect you are looking for?
+*Source: Cohen, "Analyzing Neural Time Series Data", ch. 10 to 19. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q12.** What makes a colormap "perceptually uniform", and what specifically goes wrong
+when jet is used to display continuous data? Name the failure that is worst for a
+time-frequency plot.
+*Source: matplotlib, "Choosing colormaps". `reviewed: no`*
+
+> **Answer:** _(unanswered)_
 
 ## Sources
 
