@@ -1,0 +1,219 @@
+# 04. Data acquisition
+
+**Needed in:** Phase 1
+**In one sentence:** Getting samples off the headset is the easy part; knowing exactly
+*when* each sample happened, relative to what you showed on screen, is the part that
+quietly ruins projects.
+
+## Why this matters here
+
+Your labels come from timing. A trial is "the 3 seconds after the cue appeared", and if
+your notion of when the cue appeared is off by 300 ms, every epoch is misaligned, ERD
+falls outside your analysis window, and no amount of clever classification will recover
+it. Timing errors do not announce themselves; they just look like the effect not being
+there.
+
+## The acquisition chain
+
+```
+scalp -> electrode -> amplifier -> ADC -> Bluetooth -> OS BLE stack -> BrainFlow buffer -> your code
+```
+
+Each stage adds delay, and only some of it is constant. The Bluetooth and OS stages in
+particular introduce **variable** latency (jitter), typically tens of milliseconds,
+occasionally much worse if packets are retransmitted.
+
+## Sampling
+
+* The Muse samples at **256 Hz**, so one sample every 3.9 ms.
+* **Nyquist:** you can only represent frequencies up to half the sampling rate, 128 Hz.
+  Anything above that gets **aliased**, folded down and disguised as a lower frequency.
+  The hardware applies an anti-aliasing filter before digitising, so you do not have to
+  worry about this at acquisition time, but you must worry about it if you
+  **downsample** later. See [05](05-digital-filtering.md).
+* 256 Hz is comfortably enough for an 8 to 30 Hz analysis.
+
+## Buffering: the concept that matters most
+
+BrainFlow runs a background thread that continuously writes incoming samples into a
+fixed-size **ring buffer**. Your code reads from it. Two consequences:
+
+1. **You must read often enough.** If the buffer holds 45000 samples at 256 Hz, that is
+   about 175 seconds of data. Read less often than that and old samples are silently
+   overwritten. You get no error; you just lose data.
+2. **There are two different read semantics**, and confusing them is a classic bug:
+
+| Call | Returns | Buffer after |
+|---|---|---|
+| `get_board_data()` | everything accumulated since the last call | emptied |
+| `get_current_board_data(n)` | the most recent `n` samples | unchanged |
+
+Use `get_board_data()` when **recording** (you want every sample, exactly once).
+Use `get_current_board_data(n)` when **classifying in real time** (you want the latest
+window, and overlapping windows are the whole point). Using the emptying version in a
+real-time loop gives you variable-length, non-overlapping chunks, which is not what
+your sliding window needs.
+
+## The data matrix
+
+BrainFlow returns a single 2D array of shape `(n_rows, n_samples)` where different rows
+mean different things. **The row layout depends on the board.** Never hardcode indices;
+always ask:
+
+```python
+BoardShim.get_eeg_channels(board_id)       # [1, 2, 3, 4] for Muse 2
+BoardShim.get_timestamp_channel(board_id)  # 6
+BoardShim.get_marker_channel(board_id)     # 7
+```
+
+Note that time runs along the **second** axis. This matches the convention used
+everywhere else in the project (`axis=-1` is always time).
+
+## Markers: how labels get into the data
+
+`board.insert_marker(value)` writes a number into the marker row at the current
+position in the stream. Everywhere else that row is zero. Afterwards, finding your
+events is just finding the non-zero entries:
+
+```python
+marker_row = data[BoardShim.get_marker_channel(board_id)]
+event_samples = np.flatnonzero(marker_row)
+event_values  = marker_row[event_samples]
+```
+
+Use distinct values per class (e.g. 1 for left, 2 for right), and consider extra values
+for session start, rest blocks, and rejected trials. It costs nothing now and saves you
+from re-recording later.
+
+**The marker is inserted when your code calls it, not when the subject saw the cue.**
+The gap between those two moments is your timing error. Which brings us to:
+
+## Timing and synchronisation
+
+Sources of delay between "the subject perceived the cue" and "the marker lands in the
+data":
+
+| Source | Typical size | Constant? |
+|---|---|---|
+| Bluetooth transmission and OS BLE stack | 20 to 100 ms | No, jittery |
+| Display latency (screen buffer, vsync) | 8 to 30 ms | Roughly |
+| Your code's scheduling | 0 to 20 ms | No |
+| Subject reaction/attention | 100 to 300 ms | No |
+
+For motor imagery you are analysing a multi-second window, so **you do not need
+millisecond precision**. An error of 50 ms is harmless. An error of 500 ms is not,
+because it can push your analysis window past the ERD onset. The goal is to know the
+delay to within about 100 ms, and to know that it is stable.
+
+**How to measure it empirically.** You need one event that is visible in both the EEG
+and in your program's timeline. The cheapest method:
+
+1. Start recording.
+2. Have the subject blink hard, deliberately, at the exact moment your program inserts
+   a marker (e.g. on a keypress that both inserts the marker and is the cue to blink).
+3. Repeat 20 times.
+4. In the recorded data, find the blink artifact (huge, obvious, frontal) and measure
+   the offset between the blink peak and the marker sample.
+
+The mean offset is your constant delay, and you can compensate for it. The standard
+deviation is your jitter, and you cannot compensate for it, so report it. This is a
+genuinely good experiment to include in the report; most student BCI projects skip it.
+
+**Alternative:** BrainFlow provides a timestamp row. Compare `board.get_board_data()`
+timestamps against `time.time()` in your cue code. This catches gross errors but not
+the transmission delay itself, because the timestamp is applied on arrival.
+
+## Practical Muse notes
+
+* **Board ID depends on connection method.** Native Bluetooth LE and the BLED112 USB
+  dongle are *different* board IDs for the same physical headset
+  (`MUSE_2_BOARD` = 38 vs `MUSE_2_BLED_BOARD` = 22). Getting this wrong gives a
+  connection failure that looks like a hardware problem.
+* **Discard the first few seconds.** Dry electrodes need time to settle, and the
+  initial samples are usually garbage.
+* **Check signal quality before every session**, not after. Standard deviation per
+  channel is a good enough proxy: a channel that is flat or wildly variable is not
+  making contact. Hair under TP9/TP10 is the usual cause.
+* **`BoardShim.enable_dev_board_logger()`** turns on verbose logging. Use it the first
+  time you try to connect.
+* Always call `release_session()`, including on error. An unreleased session can leave
+  the headset unable to reconnect until it is power-cycled. A `try/finally` block is
+  the right structure here.
+
+## Storage
+
+Decide the format in Phase 1 and never change it.
+
+* **Always keep the raw recording**, unfiltered and unprocessed, in `data/raw/`. Disk
+  is free; re-recording a session is not. Every processing decision you make later,
+  you will want to revisit.
+* **Save metadata with the data**: date, subject, board ID, sampling rate, channel
+  names, protocol parameters, and any notes ("electrode TP10 was loose"). A small JSON
+  file next to each recording is enough. Six months later, an unlabelled `.csv` is
+  worthless.
+* `DataFilter.write_file()` and `read_file()` handle CSV round-tripping. It is
+  inefficient but human-inspectable, which is worth a lot early on. Alternatives are
+  `.npy` (fast, numpy-native) and MNE's `.fif` (stores channel metadata alongside the
+  data, which is why it is worth graduating to).
+
+## Common mistakes
+
+* Hardcoding row indices instead of querying them.
+* Using `get_board_data()` in a real-time loop.
+* Reading from the buffer too rarely and losing data with no warning.
+* Never measuring the actual cue-to-marker delay, then wondering why ERD is absent.
+* Storing only processed data and losing the ability to reprocess.
+* Forgetting `release_session()`.
+
+## Check yourself
+
+1. Your ring buffer is 45000 samples and you sample at 256 Hz. How long can you go
+   between reads?
+2. Why is `get_current_board_data()` the right call for the real-time loop?
+3. How would you find the sample index of the third "left" cue in a recording?
+4. Design a procedure to measure your cue-to-marker latency to within 50 ms.
+5. Why would a 400 ms timing error be much worse than a 40 ms one, given a 3 s analysis
+   window?
+
+## Sources
+
+### Start here
+
+* **BrainFlow, User API**, https://brainflow.readthedocs.io/en/stable/UserAPI.html
+  The authoritative reference for every call. Read the `BoardShim` and `DataFilter`
+  sections properly.
+* **BrainFlow, Supported Boards**,
+  https://brainflow.readthedocs.io/en/stable/SupportedBoards.html
+  Board IDs, channel layouts, sampling rates, and the connection requirements per
+  device. Find the Muse section and read it before your first connection attempt.
+* **BrainFlow, Code Samples**, https://brainflow.readthedocs.io/en/stable/Examples.html
+  Short, complete, runnable examples for streaming and filtering.
+
+### Go deeper
+
+* **Lab Streaming Layer (LSL)**, https://labstreaminglayer.readthedocs.io/
+  The standard system for synchronising multiple data streams (EEG, markers, video,
+  eye tracker) with a shared clock. Overkill for this project, but this is how the
+  timing problem is solved properly, and it is worth knowing the name. BrainFlow can
+  output to LSL.
+* **OpenBCI community**, https://openbci.com/community/
+  Consumer/hobbyist EEG hardware discussion. Many of the practical acquisition problems
+  are the same across low-cost headsets.
+
+### Papers
+
+* Schalk, G., McFarland, D. J., Hinterberger, T., Birbaumer, N., & Wolpaw, J. R. (2004).
+  "BCI2000: A general-purpose brain-computer interface (BCI) system." *IEEE Transactions
+  on Biomedical Engineering*, 51(6), 1034-1043. The system that recorded the PhysioNet
+  dataset you use in Phase 3. Good on the architecture of a real-time BCI.
+* Kothe, C., et al. (2024). "The Lab Streaming Layer for Synchronized Multimodal
+  Recording." Describes the design of LSL and, usefully, quantifies the timing problems
+  it exists to solve.
+
+### Video
+
+* **EEG Brain Signal Analysis in Python: MNE, Filtering, and Animated Topomaps**,
+  https://www.youtube.com/watch?v=tO3f2gNVSMg
+  Getting recorded data into an MNE `Raw` object and doing something with it. Useful
+  for seeing the load, inspect and filter sequence end to end before you write your
+  own acquisition script.
