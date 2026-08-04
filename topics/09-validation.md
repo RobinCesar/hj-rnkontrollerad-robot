@@ -103,8 +103,8 @@ distribution** with n = number of test trials and p = 0.5. For n = 60, the 95 % 
 bound is around **60 %**. For n = 20, it is around **65 %**.
 
 So "I got 58 % with 60 trials" is **not** evidence of anything. It is inside the range
-you would expect from a coin flip. Müller-Putz et al. (2008) and Combrisson & Jerbi
-(2015) exist entirely because so many published BCI papers made this error.
+you would expect from a coin flip. Combrisson & Jerbi (2015) exists entirely because so
+many published BCI papers made this error.
 
 Compute this bound for your own trial count and put it in the results table. It takes
 one call to `scipy.stats.binom.ppf`.
@@ -241,7 +241,23 @@ score". `reviewed: no`*
 
 > **Answer:** _(unanswered)_
 
-**Q11.** Section 7.10.2 of ESL, "The Wrong and Right Way to Do Cross-validation", walks
+**Q11.** Combrisson & Jerbi tabulate how far above 50 % an accuracy can land by pure
+chance, as a function of the number of trials. For your own planned trial count, what is
+the 95 % threshold? Then state what is wrong with the sentence "we obtained 58 %, above
+the 50 % chance level".
+*Source: Combrisson & Jerbi (2015). `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q12.** Varoquaux shows that cross-validation accuracy is a noisy estimate at small
+sample sizes. Roughly how wide are the error bars he reports for a study of your size,
+and what does that imply about a claim that method A beat method B by three percentage
+points on your data?
+*Source: Varoquaux (2018). `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q13.** Section 7.10.2 of ESL, "The Wrong and Right Way to Do Cross-validation", walks
 through a concrete example. Describe what was done wrong, what accuracy it produced, and
 what the true accuracy should have been given how the data was generated.
 *Source: Hastie, Tibshirani & Friedman, "The Elements of Statistical Learning",
@@ -249,61 +265,44 @@ section 7.10.2. `reviewed: no`*
 
 > **Answer:** _(unanswered)_
 
-**Q12.** MOABB defines three evaluation protocols. Name them, and say which one most
-closely matches how someone would actually sit down and play your game.
-*Source: MOABB documentation. `reviewed: no`*
-
-> **Answer:** _(unanswered)_
-
 ## Sources
 
-### Start here
+Along with [05](05-digital-filtering.md), this is the topic where reading before doing
+genuinely pays. Everything in Tier 1 is about a mistake that silently invalidates results
+rather than producing an error message, and Combrisson & Jerbi is in Tier 1 rather than
+Tier 2 because a single accuracy number reported against 50 % is the single most likely
+way for this project to end up saying something untrue.
+
+### Tier 1
 
 * **scikit-learn, "Cross-validation: evaluating estimator performance"**,
   https://scikit-learn.org/stable/modules/cross_validation.html
   Covers every splitter, and has an explicit section on why transformations must be
-  inside the pipeline. Read the whole page.
+  inside the pipeline. Read the whole page; it is the reference for the mechanics of
+  everything above.
 * **scikit-learn, "Test with permutations the significance of a classification score"**,
   https://scikit-learn.org/stable/auto_examples/model_selection/plot_permutation_tests_for_classification.html
-  A worked permutation test with the null distribution plotted. This is the figure you
-  want in your report.
-* **scikit-learn, "Pipelines and composite estimators"**,
-  https://scikit-learn.org/stable/modules/compose.html
+  A worked permutation test with the null distribution plotted. Short, and it is both the
+  figure you want in the report and your leakage detector.
+* **Combrisson, E., & Jerbi, K. (2015). "Exceeding chance level by chance: The caveat of
+  theoretical chance levels in brain signal classification and statistical assessment of
+  decoding accuracy."** *Journal of Neuroscience Methods*, 250, 126-136. Read this before
+  you report any number. It is precisely about the mistake you are most likely to make,
+  and it contains tables of the binomial thresholds by sample size that you can use
+  directly.
 
-### Go deeper
+### Tier 2
 
-* **MOABB**, https://moabb.neurotechx.com/docs/index.html
-  Exists because BCI results were not comparable across papers. Their evaluation
-  protocols (within-session, cross-session, cross-subject) are the ones to imitate, and
-  their published numbers tell you what accuracy is actually normal for CSP+LDA on
-  motor imagery.
+* **Varoquaux, G. (2018). "Cross-validation failure: Small sample sizes lead to large
+  error bars."** *NeuroImage*, 180, 68-77. Why cross-validation estimates are so noisy
+  with few samples. Directly relevant to a 60-trial study, and the argument for why you
+  report the spread across folds rather than only the mean.
 * **Hastie, Tibshirani & Friedman, "The Elements of Statistical Learning"**, free at
   https://hastie.su.domains/ElemStatLearn/
-  Chapter 7 on model assessment, especially section 7.10.2, "The Wrong and Right Way to
-  Do Cross-validation", which is the clearest statement of the leakage problem in print.
-
-### Papers
-
-* Combrisson, E., & Jerbi, K. (2015). "Exceeding chance level by chance: The caveat of
-  theoretical chance levels in brain signal classification and statistical assessment of
-  decoding accuracy." *Journal of Neuroscience Methods*, 250, 126-136. **Read this
-  before you report any number.** It is exactly about the mistake you are most likely to
-  make, with tables of the binomial thresholds by sample size.
-* Müller-Putz, G. R., Scherer, R., Brunner, C., Leeb, R., & Pfurtscheller, G. (2008).
-  "Better than random? A closer look on BCI results." *International Journal of
-  Bioelectromagnetism*, 10(1), 52-55. Short, blunt, and specific to BCI.
-* Varoquaux, G. (2018). "Cross-validation failure: Small sample sizes lead to large
-  error bars." *NeuroImage*, 180, 68-77. Why cross-validation estimates are so noisy
-  with few samples. Directly relevant to a 60-trial study, and the reason you must
-  report variability.
-* Kriegeskorte, N., Simmons, W. K., Bellgowan, P. S., & Baker, C. I. (2009). "Circular
-  analysis in systems neuroscience: the dangers of double dipping." *Nature
-  Neuroscience*, 12(5), 535-540. The general form of the leakage problem in
-  neuroscience.
-
-### Video
-
-* **StatQuest: Cross-Validation**,
-  https://www.youtube.com/watch?v=fSytzGwwBVw
-  Why a single train and test split is not enough and what k-fold does about it.
-  Short and worth watching before you interpret any accuracy number in this project.
+  You want section 7.10.2 specifically, "The Wrong and Right Way to Do Cross-validation".
+  Four pages, and it is the clearest statement of the leakage problem in print. Ignore
+  the rest of the book unless you want it.
+* **MOABB**, https://moabb.neurotechx.com/docs/index.html
+  Also listed in [07](07-csp.md). Its three evaluation protocols (within-session,
+  cross-session, cross-subject) are the ones to imitate and to name in the report, since
+  they make your numbers comparable to published work instead of merely plausible.

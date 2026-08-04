@@ -22,11 +22,17 @@ See [REPORT.md](REPORT.md#d1-the-ladder) for how the conditions compare.
 | Channels | 4 EEG: **TP9, AF7, AF8, TP10** (reference FPz) |
 | Sampling rate | 256 Hz |
 | Connection | Bluetooth LE, via BrainFlow (`MUSE_2_BOARD` = 38 native, `MUSE_2_BLED_BOARD` = 22 with the BLED112 dongle) |
+| Optional 5th channel | One auxiliary EEG input on the micro-USB port, enabled with the `p20` / `p50` BrainFlow preset. Used in Phase 4B to place a single electrode at C3 |
 
 > **Important limitation:** the Muse electrodes sit temporally and frontally, not over
 > sensorimotor cortex (C3/C4/Cz) where mu/beta ERD during hand movement is strongest.
 > This is the project's main scientific challenge and is covered in
 > [REPORT.md](REPORT.md#e-limitations).
+>
+> The headband takes **one** extra electrode through its auxiliary input, so C3 or C4 can
+> be covered, but not both, and not the C3 versus C4 contrast that motor imagery
+> classification normally relies on. Phase 4B measures what that single electrode is
+> worth. See [topics/14-electrode-hardware.md](topics/14-electrode-hardware.md).
 
 ## Workflow
 
@@ -71,7 +77,7 @@ hjärnkontrollerat_spel/
 │   ├── 01-eeg-basics.md
 │   ├── 02-motor-imagery-erd.md
 │   ├── ...
-│   └── 13-visualisation.md
+│   └── 14-electrode-hardware.md
 │
 ├── data/
 │   ├── raw/               # Untouched recordings (always keep the original)
@@ -123,6 +129,7 @@ phase depends on.
 | 2 | Preprocessing | ⬜ |
 | 3 | Offline pipeline on a public dataset | ⬜ |
 | 4 | Offline pipeline on own Muse data | ⬜ |
+| 4B | Extra electrode at C3 via the aux input (optional) | ⬜ |
 | 5 | Real-time classification | ⬜ |
 | 6 | The game | ⬜ |
 | 7 | Visualisation | ⬜ |

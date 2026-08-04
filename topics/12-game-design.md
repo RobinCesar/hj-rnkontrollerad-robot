@@ -136,6 +136,36 @@ Beyond classification accuracy, the game gives you behavioural metrics worth rep
 That last one is the most compelling thing this project could show. It is also cheap to
 collect: log every session.
 
+### Information transfer rate, concretely
+
+ITR is worth having in full because it is the number that lets you put your system next
+to a published one, and because computing it will change how you feel about smoothing.
+Wolpaw's formulation gives the bits per *decision*:
+
+```
+B = log2(N) + P*log2(P) + (1-P)*log2((1-P)/(N-1))
+```
+
+with `N` the number of choices and `P` the accuracy. Multiply by decisions per minute to
+get bits per minute.
+
+For your case, `N = 2`, so the formula collapses to `B = 1 + P*log2(P) + (1-P)*log2(1-P)`.
+Put your numbers in and notice two things:
+
+* At `P = 0.5` you get exactly 0 bits. A chance-level classifier transmits nothing, no
+  matter how fast it runs. This is why the accuracy-versus-speed trade-off is not a
+  linear one.
+* At `P = 0.7` you get about 0.12 bits per decision. At `P = 0.8`, about 0.28. Accuracy
+  is worth much more than rate down at this end of the curve, which is the quantitative
+  argument for smoothing heavily and accepting the latency.
+
+Two honesty requirements when you report it. First, your decisions are **not
+independent**, because the sliding windows overlap ([11](11-realtime.md)), so "4
+decisions per second" is not 4 independent decisions per second and a naive ITR is
+inflated. Report the rate at which the game actually accepts a *committed* action
+instead. Second, ITR computed on the eye/jaw condition is not a BCI figure, and must be
+labelled as such wherever it appears.
+
 ## pygame specifics
 
 * **Game loop:** poll events, update state, draw, flip. Every frame.
@@ -225,55 +255,48 @@ each object yourself?
 
 > **Answer:** _(unanswered)_
 
-**Q11.** Find a consumer-EEG game project through NeuroTechX or the OpenBCI community.
-What control signal did it actually use: motor imagery, alpha power, blinks, or jaw
-clenches? What does the answer suggest about which signals are genuinely reliable on
-four channels?
-*Source: NeuroTechX, OpenBCI community. `reviewed: no`*
+**Q11.** Wolpaw et al. (2002) give the definition of a BCI and the ITR formula that this
+document uses. Two parts. First, state the definition in their words and say why an
+eye-movement-controlled game fails it. Second, compute the ITR of your game at 70 %
+accuracy and one committed action every four seconds, and say what that number means in
+plain language.
+*Source: Wolpaw et al. (2002). `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
+**Q12.** Vidaurre et al. describe coadaptation between the user and the classifier. What
+are the two adaptation loops, on what timescale does each operate, and what does the
+paper imply about a fixed classifier trained once at the start of a session?
+*Source: Vidaurre et al. (2011). `reviewed: no`*
 
 > **Answer:** _(unanswered)_
 
 ## Sources
 
-### Start here
+The game is the least academically interesting part of the project and the part most
+likely to eat your time, so **Tier 1** is deliberately one library's documentation plus
+the one paper that defines the terms you must use correctly in the write-up.
+
+### Tier 1
 
 * **pygame documentation**, https://www.pygame.org/docs/
   and the introductory tutorial at https://www.pygame.org/docs/tut/PygameIntro.html
-  Enough to build everything you need here.
-* **pygame, "Sprite module introduction"**, https://www.pygame.org/docs/tut/SpriteIntro.html
-  Useful once you have more than a couple of moving objects.
+  Enough to build everything you need here, in an afternoon. Do not go further into
+  pygame than this; the interesting part of the project is upstream of the game.
+* **Wolpaw, J. R., Birbaumer, N., McFarland, D. J., Pfurtscheller, G., & Vaughan, T. M.
+  (2002). "Brain-computer interfaces for communication and control."** *Clinical
+  Neurophysiology*, 113(6), 767-791. The field-defining review. Two things in it are
+  load-bearing for this project: the definition of a BCI that excludes your eye/jaw
+  condition, and the ITR formula above. Read the introduction and the evaluation section;
+  the survey of paradigms is optional.
 
-### Go deeper
+### Tier 2
 
-* **NeuroTechX**, https://neurotechx.com/
-  Community projects, many of them consumer-EEG games. Useful for seeing what people
-  actually manage with 4-channel headsets, and for calibrating ambition.
-* **OpenBCI community**, https://openbci.com/community/
-  Similar, with more hardware-oriented discussion.
-
-### Papers
-
-* Vidaurre, C., Sannelli, C., Müller, K.-R., & Blankertz, B. (2011).
-  "Machine-learning-based coadaptive calibration for brain-computer interfaces."
-  *Neural Computation*, 23(3), 791-816. On the user and the classifier adapting to each
-  other, which is the theoretical basis for showing feedback.
-* Lotte, F., Larrue, F., & Mühl, C. (2013). "Flaws in current human training protocols
-  for spontaneous brain-computer interfaces: lessons learned from instructional design."
-  *Frontiers in Human Neuroscience*, 7, 568. Argues that standard BCI training and
-  feedback design is poor, and applies instructional-design principles to fix it.
-  Directly relevant to designing your feedback and calibration phases.
-* Wolpaw, J. R., Birbaumer, N., McFarland, D. J., Pfurtscheller, G., & Vaughan, T. M.
-  (2002). "Brain-computer interfaces for communication and control." *Clinical
-  Neurophysiology*, 113(6), 767-791. The field-defining review, and the standard source
-  for the information transfer rate definition.
-* Kübler, A., Holz, E. M., Riccio, A., et al. (2014). "The user-centered design as novel
-  perspective for evaluating the usability of BCI-controlled applications." *PLOS ONE*,
-  9(12), e112392. On evaluating a BCI application by usability rather than accuracy
-  alone.
-
-### Video
-
-* **Controllerless Basketball Game using EEG-Based Brain Computer Interface**,
-  https://www.youtube.com/watch?v=NmX_fQkcEic
-  A finished BCI game, which is the useful part: it shows how a slow and unreliable
-  control signal has to shape the game design rather than the other way round.
+* **pygame, "Sprite module introduction"**,
+  https://www.pygame.org/docs/tut/SpriteIntro.html
+  Worth ten minutes once you have more than a couple of moving objects on screen.
+* **Vidaurre, C., Sannelli, C., Müller, K.-R., & Blankertz, B. (2011).
+  "Machine-learning-based coadaptive calibration for brain-computer interfaces."**
+  *Neural Computation*, 23(3), 791-816. The user and the classifier adapting to each
+  other, which is the theoretical basis for showing the confidence display and for
+  expecting a learning curve across sessions.

@@ -214,16 +214,19 @@ expect it to help much? Why?
 
 > **Answer:** _(unanswered)_
 
-**Q10.** What does the `component_order` parameter control, and what is the difference
-between `'mutual_info'` and `'alternate'`?
-*Source: MNE, `mne.decoding.CSP` API. `reviewed: no`*
+**Q10.** Blankertz et al. present CSP as a generalised eigenvalue problem on the two
+class covariance matrices. Sketch that formulation: what are the two matrices, what do
+the eigenvalues mean, and what do the eigenvectors mean? Then use it to explain why one
+artifact-laden trial can wreck the filters for every trial.
+*Source: Blankertz et al. (2008). `reviewed: no`*
 
 > **Answer:** _(unanswered)_
 
-**Q11.** pyRiemann classifies covariance matrices rather than CSP features. What is the
-"tangent space", and why can you not simply flatten a covariance matrix and feed it to
-LDA directly?
-*Source: pyRiemann documentation. `reviewed: no`*
+**Q11.** Haufe et al. distinguish a *backward* model from a *forward* model. Which of the
+two is a CSP filter, which is a CSP pattern, and what is the formula that converts
+between them? Give a concrete example of a wrong conclusion someone would draw by
+plotting a filter and reading it as a location.
+*Source: Haufe et al. (2014). `reviewed: no`*
 
 > **Answer:** _(unanswered)_
 
@@ -234,55 +237,52 @@ within-session, cross-session and cross-subject evaluations each mean?
 
 > **Answer:** _(unanswered)_
 
+**Q13.** pyRiemann classifies covariance matrices rather than CSP features. What is the
+"tangent space", and why can you not simply flatten a covariance matrix and feed it to
+LDA directly?
+*Source: pyRiemann documentation. `reviewed: no`*
+
+> **Answer:** _(unanswered)_
+
 ## Sources
 
-### Start here
+CSP is the one genuinely non-obvious algorithm in the project, so this is the topic where
+a paper earns its place in Tier 1. Both of the Tier 1 papers are short, and between them
+they cover what the method does and how to avoid misreading its output.
+
+### Tier 1
 
 * **MNE-Python, "Decoding motor imagery with CSP"**,
   https://mne.tools/stable/auto_examples/decoding/decoding_csp_eeg.html
   The complete worked pipeline on the PhysioNet dataset, including pattern plotting and
-  a sliding-window analysis. This is your Phase 3 target.
+  a sliding-window analysis. This is your Phase 3 target: get it running unchanged before
+  you touch any of it.
 * **MNE-Python, `mne.decoding.CSP` API**,
   https://mne.tools/stable/generated/mne.decoding.CSP.html
-  Every parameter documented, plus the `filters_` and `patterns_` attributes.
+  Every parameter documented, plus the `filters_` and `patterns_` attributes. A reference
+  page, not a read, but read it once end to end because several parameters change the
+  output shape.
+* **Blankertz, B., Tomioka, R., Lemm, S., Kawanabe, M., & Müller, K.-R. (2008).
+  "Optimizing spatial filters for robust EEG single-trial analysis."** *IEEE Signal
+  Processing Magazine*, 25(1), 41-56. The best tutorial explanation of CSP that exists,
+  written for people who want to understand it rather than just call it. Covers the
+  eigenvalue formulation, regularisation and the failure modes. It supersedes the
+  original CSP paper (Ramoser et al., 2000) for learning purposes, which is why that one
+  is not listed.
+* **Haufe, S., Meinecke, F., Görgen, K., et al. (2014). "On the interpretation of weight
+  vectors of linear models in multivariate neuroimaging."** *NeuroImage*, 87, 96-110.
+  Short, and it prevents a specific mistake you would otherwise make in a report figure:
+  reading a filter as a map of where the activity is. The same argument applies to your
+  classifier weights in [08](08-classification.md).
 
-### Go deeper
+### Tier 2
 
-* **pyRiemann**, https://pyriemann.readthedocs.io/en/latest/
-  Riemannian geometry classifiers with a scikit-learn API. The documentation includes a
-  good conceptual introduction to why covariance matrices need special treatment.
 * **MOABB (Mother of All BCI Benchmarks)**, https://moabb.neurotechx.com/docs/index.html
   Benchmarks standard pipelines (including CSP+LDA) across many public motor imagery
-  datasets. Extremely useful for calibrating expectations: it tells you what accuracy a
-  given method actually achieves, so you know whether your 68 % is good or broken.
-
-### Papers
-
-* Ramoser, H., Müller-Gerking, J., & Pfurtscheller, G. (2000). "Optimal spatial
-  filtering of single trial EEG during imagined hand movement." *IEEE Transactions on
-  Rehabilitation Engineering*, 8(4), 441-446. **The paper that introduced CSP for motor
-  imagery.** Short and readable.
-* Blankertz, B., Tomioka, R., Lemm, S., Kawanabe, M., & Müller, K.-R. (2008).
-  "Optimizing spatial filters for robust EEG single-trial analysis." *IEEE Signal
-  Processing Magazine*, 25(1), 41-56. **The best tutorial explanation of CSP that
-  exists**, written for people who want to understand rather than just use it. Covers
-  the eigenvalue formulation, regularisation, and failure modes. Read this one.
-* Haufe, S., Meinecke, F., Görgen, K., et al. (2014). "On the interpretation of weight
-  vectors of linear models in multivariate neuroimaging." *NeuroImage*, 87, 96-110.
-  The filters-vs-patterns distinction, and why misreading it leads to wrong conclusions.
-* Ang, K. K., Chin, Z. Y., Zhang, H., & Guan, C. (2008). "Filter Bank Common Spatial
-  Pattern (FBCSP) in Brain-Computer Interface." *IEEE IJCNN*. The multi-band extension.
-* Barachant, A., Bonnet, S., Congedo, M., & Jutten, C. (2012). "Multiclass
-  brain-computer interface classification by Riemannian geometry." *IEEE Transactions on
-  Biomedical Engineering*, 59(4), 920-928. The modern alternative to CSP.
-* Lotte, F., & Guan, C. (2011). "Regularizing common spatial patterns to improve BCI
-  designs: unified theory and new algorithms." *IEEE Transactions on Biomedical
-  Engineering*, 58(2), 355-362. On the `reg` parameter and when it helps.
-
-### Video
-
-* **Lecture 7.3 Common Spatial Patterns**,
-  https://www.youtube.com/watch?v=zsOULC16USU
-  A lecture derivation of CSP: the variance ratio being maximised and the generalised
-  eigenvalue problem it reduces to. Watch this if the maths in the Blankertz tutorial
-  is not landing.
+  datasets. Not reading so much as a lookup, and it answers the question you will
+  actually have in Phase 3: is my 68 % good, normal, or a sign something is broken.
+* **pyRiemann**, https://pyriemann.readthedocs.io/en/latest/
+  Riemannian geometry classifiers with a scikit-learn API, and the documentation includes
+  a good conceptual introduction to why covariance matrices need special treatment. This
+  is here as a Phase 3 extension: once CSP works, swapping this in is a small change and
+  a strong addition to the report.

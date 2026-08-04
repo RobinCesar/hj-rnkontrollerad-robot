@@ -41,6 +41,12 @@ clear yes/no.
    motor imagery signal on the same hardware, the same features and the same validation,
    in accuracy, latency and effort? This is what makes the game playable, and it is the
    reference point that makes question 3 answerable rather than rhetorical.
+6. What does adding a single electrode over C3, through the Muse's auxiliary input,
+   change? Answered by recording one session with the aux attached and analysing it
+   twice, once with five channels and once with the aux dropped, so that the comparison
+   is within session, within subject and within pipeline. This separates "motor imagery
+   is not measurable at these electrode positions" from "motor imagery is not measurable
+   here at all", which questions 1 to 5 cannot distinguish on their own.
 
 > **On terminology:** eye and jaw control is **not** a BCI. Wolpaw's definition requires
 > the system to measure central nervous system activity and not to depend on peripheral
@@ -53,7 +59,9 @@ clear yes/no.
 Written so that someone else could reproduce the experiment.
 
 ## C.1 Equipment
-Model, number of channels, sampling rate, reference, connection.
+Model, number of channels, sampling rate, reference, connection. If the auxiliary
+electrode is used, state the electrode type, the paste, how the position was measured,
+how the lead was fixed, and the BrainFlow preset used to enable the fifth channel.
 
 ## C.2 Experimental protocol (cue paradigm)
 The timeline of a single trial, number of trials per class, number of sessions, breaks.
@@ -98,6 +106,8 @@ Ordered from "no signal by construction" to "signal that is definitely present":
 | 3 | Motor imagery, public 64-ch dataset | 70 to 90 % | | The pipeline itself works |
 | 4 | Same, restricted to Muse-like channels | | | What electrode placement costs, in points |
 | 5 | Motor imagery, own Muse data | 50 to 65 % | | **The main result** |
+| 5b | Same session, aux electrode at C3, left vs. right | | | What one motor-site electrode adds to the main result |
+| 5c | Same session, aux at C3, imagery vs. rest | | | The task one central electrode can actually support |
 | 6 | Motor execution, own Muse data | higher | | Recording and labelling chain works |
 | 7 | Rest vs. rest, own Muse data | 50 % | | Should be chance. If not, the setup leaks |
 | 8 | Deliberate eye/jaw control, own Muse | 95 %+ | | Ceiling of non-neural control on this hardware |
@@ -109,6 +119,16 @@ find out which. If row 5 sits far below row 8 but above rows 0 to 2, that is a w
 credible neural result and it is the honest outcome this project is most likely to have.
 
 Row 8 is also the game's actual input source (see D.3 and section 12 of the topics).
+
+**Rows 5b and 5c** exist only if Phase 4B is run, and they are compared against row 5
+from the *same session*, not against the row 5 you already have. The recording is made
+once with the aux electrode attached and analysed twice, with and without that channel,
+so the only thing that differs between the two numbers is the electrode. Any comparison
+across sessions is confounded by placement, impedance and day-to-day variation, which is
+worth several points on its own. Row 5c changes the task as well as the montage, so it is
+not directly comparable to row 5; it is a separate claim about what this hardware can
+support, and it is the one most likely to come out positive. Method in
+[topics/14-electrode-hardware.md](topics/14-electrode-hardware.md).
 
 ## D.2 Results table
 
@@ -149,6 +169,24 @@ there. What might still be picked up is weak volume-conducted activity in TP9/TP
 The consequence to investigate and report: how much of the performance ceiling is set
 by the hardware rather than by the method.
 
+**The one thing that can be done about it.** The Muse has a single auxiliary EEG input
+on the micro-USB port, so exactly one extra electrode can be added, at C3 or C4 but not
+both. That rules out the standard C3 versus C4 lateralisation feature and leaves two
+usable designs: left versus right with one motor site added (row 5b), and imagery versus
+rest at C3, which a single channel supports well and which is still a BCI by Wolpaw's
+definition (row 5c). Whether the modification helped is answered by rows 5b and 5c
+against their same-session four-channel twin, and the cost side is answered by the noise
+comparison in the next paragraph. Method and acceptance tests in
+[topics/14-electrode-hardware.md](topics/14-electrode-hardware.md).
+
+**What the modification costs.** A hand-placed electrode on an unshielded lead, with no
+impedance readout and no mechanical support from the headband, is worse instrumentation
+than the four built-in channels. Report the ratio of the 50 Hz peak and of the
+low-frequency drift on the aux channel against TP9, and report how many trials the aux
+channel alone caused to be rejected. A fifth channel with poor contact can lower
+accuracy rather than raise it, and that outcome must be reported as readily as the other
+one.
+
 ## E.2 Artifacts that could explain a suspiciously good result
 The frontal electrodes (AF7/AF8) pick up eye movements and blinks; the temporal ones
 (TP9/TP10) pick up the temporalis muscle (jaw clenching). If the left/right thought is
@@ -177,6 +215,18 @@ The Muse has 4 channels; research equipment has 32 to 64, with electrodes over
 C3/C4/Cz. To quantify this: run the same pipeline on a public 64-channel dataset, and
 then on a subset of channels resembling the Muse placement. The difference is a direct
 estimate of the importance of the hardware.
+
+Three estimates of the same thing, from three directions, and the report is stronger for
+having all of them:
+
+* **Simulated**, from the public dataset restricted to Muse-like channels (row 4). Costs
+  nothing, but it is a simulation of the placement and not of the amplifier.
+* **Measured, one electrode**, from the auxiliary channel at C3 (rows 5b and 5c). Costs
+  about 50 CAD and gives a real number on real hardware for a real motor site.
+* **Not attempted here**: a multi-channel amplifier such as an OpenBCI Ganglion or
+  Cyton, which BrainFlow supports through the same API and which would allow C3, C4 and
+  Cz simultaneously. This is the correct answer to the placement problem and it costs one
+  to two orders of magnitude more. State the estimated gain and leave it as future work.
 
 ## E.4 Other limitations
 * One subject, so the results do not generalise.

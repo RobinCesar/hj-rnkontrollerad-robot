@@ -91,6 +91,29 @@ period. That is the right approach for the ERD *visualisations* in
 [13](13-visualisation.md), where you want to show a percentage power decrease rather
 than absolute power.
 
+### How long should the baseline be
+
+Both directions are wrong, so this is a real choice rather than a default.
+
+* **Too short** and the baseline estimate is itself noisy. You are subtracting a number
+  computed from a handful of samples, and that noise gets added to every point in the
+  epoch. Worse, it is *correlated* noise: the same erroneous value is subtracted from the
+  whole trial, which shifts the entire epoch rather than jittering it. For spectral
+  baselining the problem is sharper still, because estimating power in an 8 to 13 Hz band
+  needs at least a few cycles of that band, so a 200 ms baseline cannot estimate mu power
+  at all. Half a second is a floor; a full second is safer.
+* **Too long** and you run out of genuine rest to sit in. The baseline has to be a period
+  where nothing task-related is happening, and in a Graz-style trial the only such window
+  is between the previous trial's activity dying down and the current trial's cue.
+
+This is exactly where the epoching decision collides with the protocol design in
+[10](10-experimental-design.md). The chain runs: the beta rebound after the previous
+trial lasts about a second, you want a baseline of about a second, and you want a margin
+so that anticipation of the next cue does not creep into it. That is what forces the rest
+period to be three to five seconds rather than two, and it is why the rest duration is
+varied rather than fixed. If you shorten the rest to fit more trials into the session,
+you are not saving time, you are contaminating your baseline with the previous trial.
+
 ## Rejection
 
 After epoching, drop trials contaminated by artifacts. See [03](03-artifacts.md) for
@@ -192,51 +215,35 @@ choice there?
 
 > **Answer:** _(unanswered)_
 
-**Q11.** Luck warns that a baseline period which is too short causes problems of its
-own. What goes wrong, and how does that interact with the variable rest period this
-project's protocol uses?
-*Source: Luck, "An Introduction to the ERP Technique", epoching and baseline chapters.
-`reviewed: no`*
+**Q11.** A baseline period that is too short causes problems of its own. What goes wrong,
+why is the problem worse for *spectral* baselining than for subtracting a mean, and how
+does that constrain the rest period in your Phase 4 protocol?
+*Source: this document. `reviewed: no`*
 
 > **Answer:** _(unanswered)_
 
 ## Sources
 
-### Start here
+There is no paper worth reading for this topic. Epoching is bookkeeping: the concepts are
+all above, and the rest is knowing what MNE's `Epochs` object does for you. Read Tier 1
+with the code open and skip everything else.
+
+### Tier 1
 
 * **MNE-Python, "The Epochs data structure"**,
   https://mne.tools/stable/auto_tutorials/epochs/10_epochs_overview.html
   How epochs are constructed, indexed, cropped, and how rejection and metadata work.
-  The `Epochs` object handles a lot of the bookkeeping that is easy to get wrong by hand.
+  The `Epochs` object handles a lot of the bookkeeping that is easy to get wrong by hand,
+  above all keeping `X` and `y` aligned through rejection.
 * **MNE-Python, "Decoding motor imagery with CSP"**,
   https://mne.tools/stable/auto_examples/decoding/decoding_csp_eeg.html
-  See the concrete `tmin`/`tmax` choices made for exactly this paradigm, and the
-  reasoning in the comments.
+  The same example as in [02](02-motor-imagery-erd.md), read for a different reason here:
+  the concrete `tmin`/`tmax` choices made for exactly this paradigm, and the reasoning in
+  the comments.
 
-### Go deeper
+### Tier 2
 
-* **Steven Luck, "An Introduction to the Event-Related Potential Technique"**
-  (MIT Press). The chapters on epoching, baseline correction and artifact rejection are
-  the standard treatment. Written for ERPs, but the epoching logic is identical and
-  Luck is unusually explicit about the ways it goes wrong.
 * **MNE-Python, "Parsing events from raw data"**,
   https://mne.tools/stable/auto_tutorials/intro/20_events_from_raw.html
-  How to get from annotations or a marker channel to the events array.
-
-### Papers
-
-* Tanner, D., Morgan-Short, K., & Luck, S. J. (2015). "How inappropriate high-pass
-  filters can produce artifactual effects and incorrect conclusions in ERP studies."
-  *Psychophysiology*, 52(8), 997-1009. On the interaction between filtering and
-  epoching, and why order of operations is not a detail.
-* Delorme, A., Sejnowski, T., & Makeig, S. (2007). "Enhanced detection of artifacts in
-  EEG data using higher-order statistics and independent component analysis."
-  *NeuroImage*, 34(4), 1443-1449. On automated epoch rejection criteria.
-
-### Video
-
-* **MNE-Python Tutorial: Epoching and Evoked Responses**,
-  https://www.youtube.com/watch?v=eJmO-A1Kx6Q
-  Events, the `Epochs` object and averaging into an evoked response, demonstrated in
-  code. Your project averages band power rather than voltage, but the epoching
-  machinery is exactly the same.
+  How to get from annotations or a marker channel to the events array. You need this the
+  day you convert BrainFlow's marker row into something MNE will accept, and not before.

@@ -245,50 +245,32 @@ time-frequency plot.
 
 ## Sources
 
-### Start here
+No new papers here. The ERD figure convention comes from Pfurtscheller & Lopes da Silva
+(1999), which is already Tier 1 in [02](02-motor-imagery-erd.md), and it is the one to
+follow for computing percentage power change against baseline. Everything else in this
+topic is learned by plotting your own data badly a few times.
+
+### Tier 1
 
 * **MNE-Python, "Frequency and time-frequency sensor analysis"**,
   https://mne.tools/stable/auto_tutorials/time-freq/20_sensors_time_frequency.html
-  Covers PSD, induced power, and ERD/ERS visualisation on real data. This is the
-  tutorial that produces the figures you want.
-* **MNE-Python, visualisation tutorials**,
-  https://mne.tools/stable/auto_tutorials/index.html
-  The "Visualization" section covers `raw.plot`, `plot_topomap`, and the interactive
-  browsers. MNE's plotting is far better than anything you would write yourself for
-  these purposes.
+  Covers PSD, induced power and ERD/ERS visualisation on real data. This one tutorial
+  produces most of the figures your report needs, so work through it with your own data
+  substituted in rather than only reading it.
 * **scipy.signal**, https://docs.scipy.org/doc/scipy/reference/signal.html
-  `welch` and `spectrogram` docstrings, including what `nperseg` and `noverlap` actually
-  control.
+  The `welch` docstring specifically. You will compute a power spectrum more often than
+  any other operation in this project, and `nperseg` is the parameter that decides
+  whether the plot tells you anything.
 
-### Go deeper
+### Tier 2
 
-* **Mike X Cohen, "Analyzing Neural Time Series Data"** (MIT Press, 2014). Chapters 10
-  to 19 are the definitive treatment of time-frequency analysis for EEG: wavelets, the
-  time-frequency trade-off, baseline normalisation methods, and how to choose between
-  them. His free lecture series at https://www.youtube.com/@mikexcohen1 covers the same
-  material with code.
 * **matplotlib, "Choosing colormaps"**,
   https://matplotlib.org/stable/users/explain/colors/colormaps.html
-  Why `viridis` exists and why jet does not belong in a scientific figure.
-
-### Papers
-
-* Pfurtscheller, G., & Lopes da Silva, F. H. (1999). "Event-related EEG/MEG
-  synchronization and desynchronization: basic principles." *Clinical Neurophysiology*,
-  110(11), 1842-1857. Includes the standard method for computing and plotting ERD as a
-  percentage power change relative to baseline. This is the definition to follow.
-* Grandchamp, R., & Delorme, A. (2011). "Single-trial normalization for event-related
-  spectral decomposition reduces sensitivity to noisy trials." *Frontiers in
-  Psychology*, 2, 236. On the choice of baseline normalisation method, which affects
-  what your ERD figures look like more than people expect.
-* Crameri, F., Shephard, G. E., & Heron, P. J. (2020). "The misuse of colour in science
-  communication." *Nature Communications*, 11, 5444. The evidence behind avoiding
-  rainbow colormaps.
-
-### Video
-
-* **Power Spectral Density & Top-Map Visualization: An Advanced MNE-Python Workflow
-  for EEG Data**, https://www.youtube.com/watch?v=V3ZqiNGE7FE
-  PSD computation and topographic maps in MNE, in code. Note that topomaps with four
-  Muse electrodes are close to meaningless as spatial maps; the PSD half is what
-  applies to your data.
+  Short, and it settles the colormap question permanently: why `viridis` exists, and why
+  jet does not belong in a scientific figure. Read it once, before you make the
+  time-frequency plots, not after.
+* **Mike X Cohen, "Analyzing Neural Time Series Data"** (MIT Press, 2014), chapters 10
+  to 19. The definitive treatment of time-frequency analysis for EEG: wavelets, the
+  time-frequency trade-off, baseline normalisation methods and how to choose between
+  them. A book, so use it as a lookup when a specific choice needs justifying in the
+  report rather than reading it through.

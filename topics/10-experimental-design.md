@@ -220,65 +220,36 @@ does that you would *not* want to copy for a left/right classification study.
 
 > **Answer:** _(unanswered)_
 
-**Q11.** Wolpaw & Wolpaw describe a set of components that every BCI has in common. List
-them, and say where "the user learning to control the system" fits into that picture.
-*Source: Wolpaw & Wolpaw, "Brain-Computer Interfaces: Principles and Practice",
-experimental design and evaluation chapters. `reviewed: no`*
-
-> **Answer:** _(unanswered)_
-
-**Q12.** Read the dataset descriptions for three different motor imagery datasets in
-MOABB. List what varies between their protocols (trial length, cue modality, number of
-sessions, number of classes) and what is the same in all three.
-*Source: MOABB documentation. `reviewed: no`*
+**Q11.** Shenoy et al. quantify how much a classifier degrades between the session it was
+calibrated on and a later one. Roughly how large is the drop they report, what do they
+identify as the cause, and what does that predict for the calibration phase of your game?
+*Source: Shenoy et al. (2006). `reviewed: no`*
 
 > **Answer:** _(unanswered)_
 
 ## Sources
 
-### Start here
+The point of this topic is to copy a protocol that already works rather than invent one,
+so **Tier 1** is two dataset descriptions rather than anything theoretical. Read them
+with a pen, and write your own protocol into [REPORT.md](../REPORT.md) section C.2 as you
+go.
 
+### Tier 1
+
+* **BCI Competition IV**, https://www.bbci.de/competition/iv/
+  Dataset 2a is the standard motor imagery dataset. The description PDF contains a clear
+  diagram of the Graz paradigm timing, which is the canonical reference for your Phase 4
+  protocol. This is the single most directly copyable thing in the folder.
 * **PhysioNet, EEG Motor Movement/Imagery Dataset**,
   https://physionet.org/content/eegmmidb/1.0.0/
-  The dataset description documents a complete, working protocol: cue presentation,
-  timings, run structure, task definitions. This is the easiest way to see a real
-  protocol written up properly, and you can adapt it directly.
-* **BCI Competition IV**, https://www.bbci.de/competition/iv/
-  Dataset 2a is the standard four-class motor imagery dataset. The description PDF
-  contains a clear diagram of the Graz paradigm timing, which is the canonical reference
-  for your Phase 4 protocol.
+  A second complete protocol, structured differently: cue presentation, timings, run
+  structure, task definitions. Reading it next to the Graz one shows you which parts of a
+  protocol are conventions and which parts are load-bearing.
 
-### Go deeper
+### Tier 2
 
-* **Wolpaw & Wolpaw (eds), "Brain-Computer Interfaces: Principles and Practice"**
-  (Oxford University Press). Chapters on experimental design, subject training, and BCI
-  evaluation methodology.
-* **MOABB**, https://moabb.neurotechx.com/docs/index.html
-  Its dataset descriptions summarise the protocol of every major public motor imagery
-  dataset. Reading five of them side by side is an efficient way to see what varies and
-  what is standard.
-
-### Papers
-
-* Pfurtscheller, G., & Neuper, C. (2001). "Motor imagery and direct brain-computer
-  communication." *Proceedings of the IEEE*, 89(7), 1123-1134. Describes the Graz
-  paradigm and the reasoning behind its structure.
-* Brunner, C., Leeb, R., Müller-Putz, G., Schlögl, A., & Pfurtscheller, G. (2008).
-  "BCI Competition 2008: Graz data set A." The protocol specification for the standard
-  dataset, with exact timings.
-* Neuper, C., Scherer, R., Reiner, M., & Pfurtscheller, G. (2005). "Imagery of motor
-  actions: Differential effects of kinesthetic and visual-motor mode of imagery in
-  single-trial EEG." *Cognitive Brain Research*, 25(3), 668-677. The evidence for the
-  kinaesthetic instruction.
-* Shenoy, P., Krauledat, M., Blankertz, B., Rao, R. P., & Müller, K.-R. (2006).
-  "Towards adaptive classification for BCI." *Journal of Neural Engineering*, 3(1),
-  R13-R23. On session-to-session non-stationarity and adaptive recalibration, i.e. the
-  problem behind your cross-session experiment.
-
-### Video
-
-* **How to Train Mental Commands: EEG Controlled Brain Computer Interface**,
-  https://www.youtube.com/watch?v=hK5fTYd9gZM
-  The subject side of the experiment: how mental commands are trained and what the
-  session actually feels like to sit through. A useful sanity check on your cue
-  timing and trial count before you record yourself for an hour.
+* **Shenoy, P., Krauledat, M., Blankertz, B., Rao, R. P., & Müller, K.-R. (2006).
+  "Towards adaptive classification for BCI."** *Journal of Neural Engineering*, 3(1),
+  R13-R23. Session-to-session non-stationarity, which is the problem behind your
+  cross-session experiment and behind the game needing to recalibrate. Read it once you
+  have two sessions recorded and a gap between them to explain.

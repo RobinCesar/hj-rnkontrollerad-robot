@@ -83,6 +83,9 @@ The goal is only to see numbers moving. Nothing more.
       small metadata file alongside each recording.
 * [ ] Measure your cue-to-marker latency using the blink method in topic 04. Most
       student projects skip this; it belongs in your report.
+* [ ] Print `BoardShim.get_other_channels(board_id)` and note that the Muse has a fifth,
+      unused EEG input. You cannot use it yet, but knowing it exists shapes Phase 4B.
+      See [14. Extending the montage](topics/14-electrode-hardware.md).
 
 **Pitfalls**
 * BrainFlow buffers internally. If you call `get_board_data()` too rarely you lose data.
@@ -214,6 +217,69 @@ make an otherwise good project worthless.
 backed by a permutation test, and you can say in one sentence what the gap between row 5
 and row 8 means.
 
+# Phase 4B: Extending the montage (optional, hardware)
+
+The Muse electrodes do not cover sensorimotor cortex, and that limits every result in
+Phase 4 from above. The headband has one unused auxiliary EEG input on the micro-USB
+port, so you can add **one** electrode, at C3 or C4 but not both. This phase turns that
+limitation into a measured comparison instead of a caveat.
+
+It is optional and it costs money (about 50 CAD for the ready-made electrode plus paste
+and tape). Skip it and the project is still complete. Do it and you get the one
+experiment that can separate "motor imagery does not work on this hardware" from "motor
+imagery does not work", which is the most interesting open question the project has.
+
+**Do not start this before Phase 4 is finished.** The four-channel numbers are the
+baseline the five-channel numbers are compared against, and if you change the hardware
+before you have them, there is nothing to compare to.
+
+**Read first**
+* [14. Extending the montage](topics/14-electrode-hardware.md)
+* Re-read [01. EEG basics](topics/01-eeg-basics.md) on reference and impedance
+
+**Do**
+* [ ] Free experiment, do it first: record one session with the headband shifted up and
+      back, so TP9/TP10 move toward T7/T8. Check signal quality and the alpha test before
+      trusting anything from it. Costs nothing and may be worth more than the electrode.
+* [ ] Before spending anything: enable the fifth channel in software with
+      `config_board("p20")` before `start_stream()`, and confirm row 5 appears. Print
+      `BoardShim.get_other_channels(board_id)`. This costs nothing and proves the
+      software half works.
+* [ ] Order the single-cup micro-USB auxiliary electrode, conductive paste and skin prep
+      gel. Do not solder your own; a bad joint is indistinguishable from a bad result.
+* [ ] Decide the mechanical fixing (elastic band, bandana or swim cap) and the strain
+      relief for the lead before the electrode arrives.
+* [ ] Measure C3 properly with a tape measure, using the 10-20 procedure, and mark it.
+      Guessing the position defeats the purpose of the whole phase.
+* [ ] Run acceptance tests 1 to 5 from topic 14, in order, and keep the data from each:
+      channel exists, signal path real (correlate against TP9), **eyes-closed alpha at
+      Oz**, noise budget against TP9, motor execution ERD at C3.
+* [ ] Stop here and reconsider if the alpha test fails. Nothing later is interpretable.
+* [ ] Record the Phase 4 protocol again, unchanged, with the aux at C3. Same trial
+      counts, same cues, same everything. Record imagery vs. rest **and** left vs. right.
+* [ ] Analyse each recording twice: once with all five channels, once with row 5 dropped.
+      Same session, same trials, same pipeline. That difference is the effect of the
+      electrode, and it is the cleanest experiment in the project.
+* [ ] Add a plain baseline feature: log band power at C3 in 8:13 Hz relative to the
+      pre-cue baseline, with no CSP. If CSP on five channels does not beat it, report it.
+* [ ] Fill in ladder rows 5b and 5c in REPORT.md D.1, and repeat the eye/jaw condition
+      with the aux attached so row 8 stays comparable.
+* [ ] Write the noise numbers (50 Hz ratio, drift) into REPORT.md. "It worked" is not a
+      result; "the aux channel had 3.4x the 50 Hz amplitude of TP9" is.
+
+**Pitfalls**
+* **Never charge the headband while wearing it.** The aux input is the charging port.
+* Do not pool four-channel and five-channel recordings into one training set. Different
+  dimensionality, different sessions, different rows of the ladder.
+* A fifth channel with poor contact can *lower* accuracy by giving CSP a noisy dimension
+  to overfit. This is a possible outcome, not a bug.
+* An unshielded lead is an antenna and a motion sensor. Tape it down along its length.
+* C3 is under hair. Part the hair, prep the skin, use paste. A dry electrode resting on
+  hair records almost nothing and looks like it is recording something.
+
+**Done when:** the eyes-closed alpha test at Oz is a figure in the report, and D.1 has a
+five-channel row next to its four-channel twin from the same session.
+
 # Phase 5: Real time
 
 **Read first**
@@ -334,4 +400,7 @@ them into report-quality figures.
 | Contralateral | Opposite side; the right hand is controlled by the left motor cortex |
 | Leakage | Test-set information influencing training, producing inflated accuracy |
 | Volume conduction | The smearing of cortical sources across the scalp by skull and tissue |
+| Montage | The set of electrode positions used, and what each is referenced to |
+| AUX channel | The Muse's fifth, external EEG input on the micro-USB port. One only |
+| Impedance | Resistance of the electrode-skin contact. High impedance means a noisy channel |
 | ITR | Information Transfer Rate, bits per minute, the standard BCI performance metric |

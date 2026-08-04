@@ -249,61 +249,38 @@ which of its methods would you use to make an acquisition thread exit cleanly?
 
 > **Answer:** _(unanswered)_
 
-**Q11.** OpenViBE documents its online processing chain as a sequence of boxes. What are
-the stages between acquisition and output, and what is an "epoching" box doing in a
-system that has no cues to epoch around?
-*Source: OpenViBE documentation. `reviewed: no`*
+**Q11.** Design the measurement that gets you an actual latency number rather than the
+estimate in the table above. What do you log, how many repetitions, and what two
+statistics do you report? Which of them can you compensate for and which must simply be
+stated?
+*Source: this document. `reviewed: no`*
 
 > **Answer:** _(unanswered)_
 
-**Q12.** What is LSL's `local_clock()`, and how does LSL deal with two machines whose
-clocks disagree? Why is that harder than just timestamping on arrival?
-*Source: Lab Streaming Layer documentation. `reviewed: no`*
+**Q12.** Smoothing trades accuracy against latency, and there is no correct setting in
+the abstract. Describe the experiment that turns that trade-off into a figure, name the
+two axes, and say what you would look for on it to choose an `alpha`.
+*Source: this document. `reviewed: no`*
 
 > **Answer:** _(unanswered)_
 
 ## Sources
 
-### Start here
+Nothing but reference documentation, and that is the right shape for this phase. The
+failure modes here are not conceptual gaps, they are mismatches between two pieces of
+your own code, so the way to learn this topic is to build the debug view and watch it
+misbehave. The one paper worth reading for the calibration-to-online distribution shift
+is Shenoy et al. (2006), listed in [10](10-experimental-design.md) Tier 2.
+
+### Tier 1
 
 * **BrainFlow, Code Samples**, https://brainflow.readthedocs.io/en/stable/Examples.html
-  Includes streaming loops that show the `get_current_board_data` pattern.
+  Includes streaming loops that show the `get_current_board_data` pattern, which is the
+  one call that separates a working real-time loop from a broken one.
 * **scipy.signal**, https://docs.scipy.org/doc/scipy/reference/signal.html
-  Read the docstrings for `sosfilt`, `sosfilt_zi` and `lfilter_zi` carefully. The `zi`
-  parameter is the whole mechanism for continuous filtering, and the documentation is
-  the clearest explanation of it.
+  Read the docstrings for `sosfilt` and `sosfilt_zi` carefully. The `zi` parameter is the
+  entire mechanism for continuous filtering across blocks, and the docs are the clearest
+  explanation of it that exists.
 * **Python `threading` and `queue` docs**, https://docs.python.org/3/library/queue.html
-  `queue.Queue` is thread-safe and removes an entire class of bugs. Use it rather than
-  managing locks yourself.
-
-### Go deeper
-
-* **Lab Streaming Layer**, https://labstreaminglayer.readthedocs.io/
-  The standard infrastructure for real-time multi-stream neuroscience. Reading its
-  design documents teaches the timing problems even if you do not use it.
-* **OpenViBE**, http://openvibe.inria.fr/
-  A full open-source real-time BCI platform. Not something to use here, but its
-  documentation of the online processing chain (windowing, feature extraction,
-  classification, output) shows how a mature system is structured.
-
-### Papers
-
-* Schalk, G., et al. (2004). "BCI2000: A general-purpose brain-computer interface (BCI)
-  system." *IEEE Transactions on Biomedical Engineering*, 51(6), 1034-1043. The
-  architecture of a real-time BCI, by the group that built the reference implementation.
-* Shenoy, P., Krauledat, M., Blankertz, B., Rao, R. P., & Müller, K.-R. (2006).
-  "Towards adaptive classification for BCI." *Journal of Neural Engineering*, 3(1),
-  R13-R23. On the distribution shift between calibration and online use, and adaptive
-  methods for handling it.
-* Vidaurre, C., Sannelli, C., Müller, K.-R., & Blankertz, B. (2011). "Machine-learning-based
-  coadaptive calibration for brain-computer interfaces." *Neural Computation*, 23(3),
-  791-816. On the classifier and the user adapting to each other during use, which is
-  what actually happens when someone plays your game.
-
-### Video
-
-* **Play video game using your mind | EEG | Complete tutorial**,
-  https://www.youtube.com/watch?v=EWsdFdE0LCw
-  An end to end walkthrough of a consumer headset driving a game in real time. Treat
-  the accuracy claims in demos like this with suspicion, but the structure of the
-  acquire, classify, act loop is the thing to take away.
+  `queue.Queue` is thread-safe by construction and removes a whole class of bugs. Use it
+  rather than managing locks yourself, and read `threading.Event` for clean shutdown.

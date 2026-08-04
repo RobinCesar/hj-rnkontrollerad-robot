@@ -208,10 +208,10 @@ is the operation that connects them to the act of filtering a signal?
 
 > **Answer:** _(unanswered)_
 
-**Q11.** Smith frames the FIR vs. IIR choice as two different design goals rather than
-one being better. What are the two goals, and which one does your offline 8 to 30 Hz
-bandpass care about most?
-*Source: Smith, "The Scientist and Engineer's Guide to DSP". `reviewed: no`*
+**Q11.** de Cheveigné & Nelken show that filtering can *create* effects that were not in
+the data. Describe one of their concrete examples, and say which of the filtering choices
+in this project is the one most likely to produce that failure in your own analysis.
+*Source: de Cheveigné & Nelken (2019). `reviewed: no`*
 
 > **Answer:** _(unanswered)_
 
@@ -224,48 +224,31 @@ filter *before* you apply it to any data?
 
 ## Sources
 
-### Start here
+Filtering is where the early bugs live, so this is one of the two topics (with
+[09](09-validation.md)) where the Tier 1 reading genuinely saves more time than it costs.
+
+### Tier 1
 
 * **MNE-Python, "Background information on filtering"**,
   https://mne.tools/stable/auto_tutorials/preprocessing/25_background_filtering.html
   The best single document on this topic anywhere. Written specifically for EEG, covers
   causal vs. zero-phase, filter order, ringing, and edge effects, with figures showing
   exactly what goes wrong in each case. **Read this one properly, twice if needed.**
+* **scipy.signal reference**, https://docs.scipy.org/doc/scipy/reference/signal.html
+  Not a read-through: read the docstrings for `butter`, `sosfilt`, `sosfiltfilt`,
+  `sosfilt_zi` and `sosfreqz`, because those five calls are your entire filtering
+  implementation. `sosfreqz` in particular is how you check a filter *before* applying it
+  to data, which is the habit this topic is trying to build.
+* **de Cheveigné, A., & Nelken, I. (2019). "Filters: When, Why, and How (Not) to Use
+  Them."** *Neuron*, 102(2), 280-293. Short, readable and slightly alarming, on the
+  artifacts that filtering introduces rather than removes. It is the source of the
+  warning above about non-causal filters manufacturing apparent pre-movement effects,
+  which is a live risk in a project looking for pre-movement ERD.
+
+### Tier 2
+
 * **Steven W. Smith, "The Scientist and Engineer's Guide to DSP"**, free at
   https://www.dspguide.com/
   Chapters 14 to 21 cover filters from the ground up with almost no mathematical
-  prerequisites. If MNE's tutorial assumes too much, start here instead.
-
-### Go deeper
-
-* **scipy.signal reference**, https://docs.scipy.org/doc/scipy/reference/signal.html
-  and the tutorial at https://docs.scipy.org/doc/scipy/tutorial/signal.html
-  Read the docstrings for `butter`, `sosfilt`, `sosfiltfilt`, `sosfilt_zi` and
-  `freqz` carefully. `freqz` lets you plot the frequency response of a filter you
-  designed, which is how you check it before applying it to anything.
-* **Mike X Cohen, "Analyzing Neural Time Series Data"** (MIT Press, 2014), the
-  filtering chapters. Also his free video series at
-  https://www.youtube.com/@mikexcohen1, which includes a full set of lectures on
-  filtering neural data with worked examples.
-
-### Papers
-
-* de Cheveigné, A., & Nelken, I. (2019). "Filters: When, Why, and How (Not) to Use
-  Them." *Neuron*, 102(2), 280-293. A short, readable, and slightly alarming paper on
-  the artifacts filtering introduces. The source of the warning about non-causal
-  filters creating apparent pre-stimulus effects.
-* Widmann, A., Schröger, E., & Maess, B. (2015). "Digital filter design for
-  electrophysiological data: a practical approach." *Journal of Neuroscience Methods*,
-  250, 34-46. Concrete recommendations for filter type, order and cutoffs in EEG, with
-  the reasoning behind each. This is the paper to cite in your method section.
-* Rousselet, G. A. (2012). "Does filtering preclude us from studying ERP time-courses?"
-  *Frontiers in Psychology*, 3, 131. Short, on how high-pass filtering distorts the
-  timing of effects.
-
-### Video
-
-* **Band-pass filtering and the filter-Hilbert method**,
-  https://www.youtube.com/watch?v=ljw3gW-nL0E
-  Band-pass filter design and then the Hilbert transform for extracting band power.
-  The filter-Hilbert method is directly relevant: it is one of the two ways to get
-  the mu band envelope that your classifier will feed on.
+  prerequisites. Open this if MNE's tutorial assumes background you do not have. It is a
+  book, so treat it as a place to look things up rather than a queue to work through.

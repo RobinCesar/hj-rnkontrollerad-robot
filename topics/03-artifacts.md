@@ -96,11 +96,31 @@ In roughly the order you should implement them:
 4. **Spectral checks.** Compare class-average power spectra above 30 Hz for EMG, and
    below 4 Hz for EOG.
 
-## Removal, and why you should mostly not
+## Rejection vs. correction
 
-**ICA** (Independent Component Analysis) is the standard tool. It decomposes the signal
-into statistically independent components, you identify the ones that look like eyes or
-muscle, and you reconstruct the data without them.
+There are exactly two things you can do about a contaminated trial, and they are
+different in kind. Getting the vocabulary right matters because the report has to say
+which one you chose and why.
+
+* **Rejection** throws the contaminated data away. You lose trials, your statistical
+  power drops, and if the contamination is not equally likely in both classes you have
+  also introduced a bias. What you keep is clean and unaltered.
+* **Correction** keeps the trial and subtracts an estimate of the artifact from it. You
+  keep your trial count, but every remaining sample is now partly a model output rather
+  than a measurement, and if the estimate is wrong you have distorted your data in a way
+  that is invisible afterwards.
+
+The argument for correction is that rejection can bite hardest exactly where you can
+least afford it: if a subject blinks more during one condition, rejection removes more of
+that condition. The argument for rejection is that it cannot manufacture an effect, and
+that a correction you cannot verify is worse than a smaller dataset. With few channels,
+the second argument wins decisively.
+
+### Why correction is not available to you: ICA
+
+**ICA** (Independent Component Analysis) is the standard correction tool. It decomposes
+the signal into statistically independent components, you identify the ones that look
+like eyes or muscle, and you reconstruct the data without them.
 
 The catch: ICA can extract at most as many components as you have channels. With
 **4 channels you get 4 components**, and each will be a blurry mixture of brain and
@@ -108,10 +128,32 @@ artifact. Removing one throws away a quarter of your data along with the artifac
 is a technique for 32+ channel systems.
 
 **For this project: use rejection, not correction.** Threshold-reject bad epochs and
-accept that you lose trials. It is more defensible than pretending 4-channel ICA
-cleaned anything. Read about ICA anyway, understand why it does not apply here, and
-write that reasoning into the report. Recognising when a standard technique does *not*
-fit is exactly the kind of judgement the report should demonstrate.
+accept that you lose trials, and log the counts per class so the bias is visible rather
+than hidden. It is more defensible than pretending 4-channel ICA cleaned anything. Read
+about ICA anyway, understand why it does not apply here, and write that reasoning into
+the report. Recognising when a standard technique does *not* fit is exactly the kind of
+judgement the report should demonstrate.
+
+## Where cleaning sits in the pipeline
+
+Order matters, and two of these are commonly got wrong.
+
+1. **High-pass or bandpass the continuous data first.** Drift is what makes amplitude
+   thresholds fire on data that is otherwise fine, so thresholding unfiltered data mostly
+   detects drift rather than the artifacts that will affect your features.
+2. **Notch out mains** if you are going to look at raw data or anything above 30 Hz.
+3. **Identify bad channels** across the whole recording, before epoching. A channel that
+   never made contact is a property of the session, not of individual trials, and
+   catching it early stops it silently poisoning every epoch. On four channels you cannot
+   interpolate a bad channel from its neighbours the way a 64-channel montage would, so
+   a dead channel means either dropping it for the whole session (and saying so) or
+   re-recording.
+4. **Epoch**, then **reject epochs by amplitude**.
+5. Only then extract features.
+
+The one that catches people: filtering must precede epoching, for the edge-transient
+reason in [05](05-digital-filtering.md), *and* it must precede rejection, for the drift
+reason above. Both point the same way, so there is a single correct order.
 
 ## The control experiments
 
@@ -193,68 +235,57 @@ What does that function need in the recording, and why can you not use it on Mus
 
 > **Answer:** _(unanswered)_
 
-**Q9.** What does marking a channel as "bad" actually do to it in MNE, and what does
-`interpolate_bads()` do? Why is interpolation not available to you on a Muse?
-*Source: MNE, "Handling bad channels". `reviewed: no`*
+**Q9.** State the difference between artifact *rejection* and artifact *correction*, give
+the argument in favour of each, and say which one this project uses and why the four
+channels settle the question.
+*Source: this document. `reviewed: no`*
 
 > **Answer:** _(unanswered)_
 
-**Q10.** In Makoto's preprocessing pipeline, in what order do high-pass filtering, line
-noise removal, bad channel rejection and ICA appear, and what is the stated reason for
-high-passing before ICA rather than after?
-*Source: Makoto's preprocessing pipeline. `reviewed: no`*
+**Q10.** Goncharova et al. recorded EEG while subjects deliberately contracted specific
+muscles. What was the spectral shape of temporalis EMG, and how far across the scalp did
+it spread? Given where TP9 and TP10 sit, what does their result predict for a jaw clench
+on your headband, and what does it predict for the frontalis and neck muscles?
+*Source: Goncharova et al. (2003). `reviewed: no`*
 
 > **Answer:** _(unanswered)_
 
-**Q11.** Luck distinguishes artifact *rejection* from artifact *correction*. State the
-difference, give the argument he makes for each, and say which one this project uses and
-why.
-*Source: Luck, "An Introduction to the ERP Technique", artifact chapter. `reviewed: no`*
+**Q11.** Muthukumaraswamy argues that a large fraction of published high-frequency
+findings are muscle rather than brain. What is his central recommendation for telling
+them apart, and what does it imply about ever reporting anything above 30 Hz from a Muse?
+*Source: Muthukumaraswamy (2013). `reviewed: no`*
 
 > **Answer:** _(unanswered)_
 
 ## Sources
 
-### Start here
+Artifacts are the existential threat to this project's conclusion, so **Tier 1** here has
+a paper in it. Read Goncharova before your first Phase 4 recording, not after you have a
+result you want to believe.
+
+### Tier 1
 
 * **MNE-Python, "Overview of artifact detection"**,
   https://mne.tools/stable/auto_tutorials/preprocessing/10_preprocessing_overview.html
-  Shows what each artifact type looks like in real data. Start here, it is largely a
-  visual skill.
+  Shows what each artifact type looks like in real data. This is largely a visual skill,
+  so the figures are the point. Half an hour, and it pays for itself the first time you
+  scroll through your own recording.
+* **Goncharova, I. I., McFarland, D. J., Vaughan, T. M., & Wolpaw, J. R. (2003). "EMG
+  contamination of EEG: spectral and topographical characteristics."** *Clinical
+  Neurophysiology*, 114(9), 1580-1593. Written by the BCI2000 group specifically because
+  EMG kept faking BCI results, and it measures exactly the muscles that sit under your
+  electrodes. This is the most directly relevant paper in the entire topic folder to the
+  hardware you own.
+
+### Tier 2
+
 * **MNE-Python, "Repairing artifacts with ICA"**,
   https://mne.tools/stable/auto_tutorials/preprocessing/40_artifact_correction_ica.html
-  Read it to understand the method and to see how many channels it assumes.
-* **MNE-Python, "Handling bad channels"**,
-  https://mne.tools/stable/auto_tutorials/preprocessing/15_handling_bad_channels.html
-
-### Go deeper
-
-* **Makoto's preprocessing pipeline**,
-  https://sccn.ucsd.edu/wiki/Makoto%27s_preprocessing_pipeline
-  Written for EEGLAB, but it is the most widely-used practical checklist for EEG
-  cleaning, and the reasoning transfers.
-* **Steven Luck, "An Introduction to the Event-Related Potential Technique"**
-  (MIT Press), the artifact chapter. The clearest written treatment of eye artifacts in
-  particular.
-
-### Papers
-
-* Chaumon, M., Bishop, D. V., & Busch, N. A. (2015). "A practical guide to the selection
-  of independent components of the electroencephalogram for artifact correction."
-  *Journal of Neuroscience Methods*, 250, 47-63. How to actually decide what an ICA
-  component is.
-* Muthukumaraswamy, S. D. (2013). "High-frequency brain activity and muscle artifacts
-  in MEG/EEG: a review and recommendations." *Frontiers in Human Neuroscience*, 7, 138.
-  The reference on why EMG contaminates the beta and gamma bands, and how to detect it.
-* Goncharova, I. I., McFarland, D. J., Vaughan, T. M., & Wolpaw, J. R. (2003). "EMG
-  contamination of EEG: spectral and topographical characteristics." *Clinical
-  Neurophysiology*, 114(9), 1580-1593. Written by the BCI2000 group specifically
-  because EMG kept faking BCI results. Directly relevant.
-
-### Video
-
-* **Manual Artifact Removal in EEG with Python**,
-  https://www.youtube.com/watch?v=5jIkUiQn4YI
-  Walks through inspecting raw data by eye and marking bad segments and channels in
-  Python. Manual inspection is the step you should do first on Muse data, before
-  reaching for ICA.
+  You are not going to use ICA here. Read it anyway, once, to see how many channels it
+  assumes and to be able to say precisely why it does not apply, which is a paragraph the
+  report needs.
+* **Muthukumaraswamy, S. D. (2013). "High-frequency brain activity and muscle artifacts
+  in MEG/EEG: a review and recommendations."** *Frontiers in Human Neuroscience*, 7, 138.
+  Why EMG contaminates the beta and gamma bands and how to detect it. Open it when you
+  are writing the artifact-control section of the report and want the general statement
+  rather than the Muse-specific one.

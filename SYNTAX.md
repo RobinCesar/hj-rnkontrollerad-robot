@@ -40,9 +40,18 @@ BoardShim.get_eeg_channels(board_id)      # [1, 2, 3, 4]  -> row indices in the 
 BoardShim.get_eeg_names(board_id)         # ['TP9', 'AF7', 'AF8', 'TP10']
 BoardShim.get_timestamp_channel(board_id) # 6
 BoardShim.get_marker_channel(board_id)    # 7
+BoardShim.get_other_channels(board_id)    # [5]  -> the aux EEG input, see below
 
 # --- Session ---
 board.prepare_session()
+
+# Optional: enable the 5th EEG value (the aux electrode on the micro-USB port).
+# Must be called AFTER prepare_session and BEFORE start_stream.
+#   p21 = 4 EEG + IMU (default)      p20 = 5 EEG + IMU
+#   p51 = 4 EEG + IMU + PPG          p50 = 5 EEG + IMU + PPG
+board.config_board("p20")                 # theory: topics/14-electrode-hardware.md
+# The aux value then arrives in row 5, i.e. get_other_channels(), not get_eeg_channels().
+
 board.start_stream(45000)                 # ring buffer size in samples
 board.insert_marker(1.0)                  # label in the stream, inserted at the cue
 

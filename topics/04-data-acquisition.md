@@ -123,6 +123,22 @@ genuinely good experiment to include in the report; most student BCI projects sk
 timestamps against `time.time()` in your cue code. This catches gross errors but not
 the transmission delay itself, because the timestamp is applied on arrival.
 
+**Why an arrival timestamp cannot fix this, in one paragraph.** The number you want is
+when the sample was *taken at the scalp*. The number you get is when the packet reached
+your process, after the amplifier buffered it, the headset's radio waited for its next
+BLE connection interval, the OS Bluetooth stack queued it, and Python got scheduled. Each
+of those adds delay, and only the first is constant. Worse, samples arrive in **chunks**:
+a packet carrying twelve samples gets one arrival time, so eleven of the twelve
+timestamps are reconstructed by assuming a perfectly regular sample interval, which the
+headset's clock does not exactly honour. So an arrival timestamp gives you a good
+estimate of the *average* delay and tells you nothing about the jitter around it.
+
+This is the problem that Lab Streaming Layer exists to solve, by timestamping at the
+source and continuously estimating the offset between the two machines' clocks. You do
+not need it here, because motor imagery is analysed over multi-second windows and 50 ms
+of jitter is irrelevant at that scale. But know the name and know why the problem is
+real, because if you ever move to an ERP paradigm the same shortcut becomes fatal.
+
 ## Practical Muse notes
 
 * **Board ID depends on connection method.** Native Bluetooth LE and the BLED112 USB
@@ -239,43 +255,29 @@ need in your setup to benefit from it?
 
 ## Sources
 
-### Start here
+This is the most purely practical topic in the folder, and it shows: **Tier 1** is one
+documentation site, and there are no papers worth your time. Everything here is learned
+by connecting to the headset and printing array shapes.
+
+### Tier 1
 
 * **BrainFlow, User API**, https://brainflow.readthedocs.io/en/stable/UserAPI.html
   The authoritative reference for every call. Read the `BoardShim` and `DataFilter`
-  sections properly.
+  sections properly, once, rather than looking up calls one at a time forever.
 * **BrainFlow, Supported Boards**,
   https://brainflow.readthedocs.io/en/stable/SupportedBoards.html
   Board IDs, channel layouts, sampling rates, and the connection requirements per
-  device. Find the Muse section and read it before your first connection attempt.
+  device. Find the Muse section and read it before your first connection attempt; it
+  will save you an evening of debugging a "hardware fault" that is a wrong board ID.
 * **BrainFlow, Code Samples**, https://brainflow.readthedocs.io/en/stable/Examples.html
-  Short, complete, runnable examples for streaming and filtering.
+  Short, complete, runnable examples for streaming and filtering. Start from these
+  rather than from a blank file.
 
-### Go deeper
+### Tier 2
 
 * **Lab Streaming Layer (LSL)**, https://labstreaminglayer.readthedocs.io/
-  The standard system for synchronising multiple data streams (EEG, markers, video,
-  eye tracker) with a shared clock. Overkill for this project, but this is how the
-  timing problem is solved properly, and it is worth knowing the name. BrainFlow can
-  output to LSL.
-* **OpenBCI community**, https://openbci.com/community/
-  Consumer/hobbyist EEG hardware discussion. Many of the practical acquisition problems
-  are the same across low-cost headsets.
-
-### Papers
-
-* Schalk, G., McFarland, D. J., Hinterberger, T., Birbaumer, N., & Wolpaw, J. R. (2004).
-  "BCI2000: A general-purpose brain-computer interface (BCI) system." *IEEE Transactions
-  on Biomedical Engineering*, 51(6), 1034-1043. The system that recorded the PhysioNet
-  dataset you use in Phase 3. Good on the architecture of a real-time BCI.
-* Kothe, C., et al. (2024). "The Lab Streaming Layer for Synchronized Multimodal
-  Recording." Describes the design of LSL and, usefully, quantifies the timing problems
-  it exists to solve.
-
-### Video
-
-* **EEG Brain Signal Analysis in Python: MNE, Filtering, and Animated Topomaps**,
-  https://www.youtube.com/watch?v=tO3f2gNVSMg
-  Getting recorded data into an MNE `Raw` object and doing something with it. Useful
-  for seeing the load, inspect and filter sequence end to end before you write your
-  own acquisition script.
+  The standard system for synchronising multiple data streams with a shared clock, and
+  the proper solution to the timing problem described above. Genuinely overkill for this
+  project, so this is here for one reason: read enough of it to be able to say in the
+  report what you did *not* do about timing and why that was acceptable for a
+  multi-second paradigm. BrainFlow can output to LSL if you ever need it.

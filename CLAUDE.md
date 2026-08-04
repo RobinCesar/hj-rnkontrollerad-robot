@@ -100,9 +100,9 @@ hjärnkontrollerat_spel/
 ├── requirements.txt
 ├── .gitignore             # .venv/, __pycache__/, data/, models/
 │
-├── topics/                # 13 concept documents + README with the reading order
+├── topics/                # 14 concept documents + README with the reading order
 │   ├── README.md          # Index, reading order, the question-answering convention
-│   └── 01..13-*.md        # Explanation, common mistakes, Questions, Sources
+│   └── 01..14-*.md        # Explanation, common mistakes, Questions, Sources
 │
 ├── data/raw/              # Untouched recordings. Git-ignored
 ├── data/processed/        # Epoched / filtered datasets. Git-ignored
@@ -139,8 +139,13 @@ Every topic document ends in a `## Questions` section. Format per question:
 ```
 
 Roughly half of each set comes from the document's own explanation, the rest from the
-"Start here" and "Go deeper" sources, named in the `Source:` line. Nothing is drawn from
-the "Papers" sections. There are 151 questions in total.
+Tier 1 and Tier 2 sources, named in the `Source:` line. Papers are included: every paper
+that survived the 2026-08-04 pruning has at least one question attached, which is the
+test of whether it earned its place. There are 167 questions in total.
+
+When a `> **Check:**` line is added under an answer, separate it from the answer with a
+`>` line rather than a blank line, so the two stay in one blockquote and the markdown
+linter does not flag MD028.
 
 ### Checking answers when Robin asks
 
@@ -177,6 +182,13 @@ document too, and say so.
   EMG at TP9/TP10, eye movement at AF7/AF8), not success.
 * CSP and any fitted filter must sit inside the sklearn `Pipeline` so they are refitted
   per cross-validation fold, otherwise the results leak.
+* The Muse has **one** auxiliary EEG input, on the micro-USB port, exposed by BrainFlow
+  as row 5 (`get_other_channels`) once `config_board("p20")` or `"p50"` is called between
+  `prepare_session()` and `start_stream()`. One extra electrode means C3 **or** C4, never
+  both, so the C3 versus C4 lateralisation feature stays unavailable. Phase 4B and
+  [topics/14-electrode-hardware.md](topics/14-electrode-hardware.md) cover it.
+* The aux input and the charging port are the same port. Charging while wearing the
+  headband with an electrode attached removes the mains isolation. Never suggest it.
 
 # Conventions
 
@@ -263,3 +275,124 @@ topic documents on SSVEP and CCA and a rewrite of Phases 5 to 7.
 
 Not changed: the topic documents. Nothing in them became wrong, and topic 03 already
 covers the eye and jaw signals in the detail the new condition needs.
+
+## 2026-08-04, the aux electrode
+
+Robin asked whether the Muse can be extended with electrodes over sensorimotor cortex.
+Answer: partly. Verified against the installed BrainFlow and the vendor documentation
+that the Muse 2 has exactly **one** auxiliary EEG input on the micro-USB port, reached
+with `config_board("p20"|"p50")` before `start_stream()` and delivered on row 5 via
+`get_other_channels()`. One input means C3 or C4, not both, so the C3 versus C4
+lateralisation feature remains out of reach; what becomes possible is left versus right
+with one motor site added, and imagery versus rest at C3, which is a genuine BCI and the
+likeliest positive result in the project. Recommended buying the ready-made single-cup
+micro-USB electrode (about 50 CAD) rather than soldering, because a bad joint is
+indistinguishable from a null result.
+
+Added: [topics/14-electrode-hardware.md](topics/14-electrode-hardware.md) (12 questions,
+so 163 in total now), LEARNING_PLAN.md Phase 4B between Phases 4 and 5, REPORT.md
+research question 6, ladder rows 5b and 5c with the same-session comparison rule, an
+expanded E.1 and a three-way E.3, README hardware row and status row, SYNTAX.md
+`config_board` block.
+
+The design point that matters: the effect of the electrode is measured by recording
+**one** session with the aux attached and analysing it twice, with and without row 5.
+Comparing against the four-channel numbers from an earlier session is confounded by
+session variability and must be refused if Robin proposes it.
+
+Acceptance test to insist on before any Phase 4B result is discussed: eyes-closed alpha
+at Oz on the aux channel. If that fails, the electrode is not recording cortex and every
+number after it is noise.
+
+Next: unchanged. Phase 0, `pip uninstall csp`, then data out of the Muse. Phase 4B is
+explicitly gated behind Phase 4 being finished.
+
+Follow-up the same day: Robin asked whether hardware changes could yield a second input,
+or whether the one port could carry two sensors. Answered no, and topic 14 gained
+sections 7 and 8 for it. The arguments, so they are not re-derived:
+
+* The ceiling is the **firmware**, not the pins. The largest EEG payload the Muse
+  transmits is five values (`p20` / `p50`). BrainFlow cannot decode a sixth number that
+  was never sent, so soldering cannot raise the channel count.
+* **Bridging** two electrodes onto the one pin gives an impedance-weighted average of the
+  two sites. Acceptable for imagery versus rest, self-defeating for left versus right,
+  since averaging the hemispheres cancels the contrast and the wire shunts the asymmetry.
+* **Multiplexing** between C3 and C4 fails on switching transients, halved rate, and
+  decisively because CSP needs simultaneous covariance between channels.
+* **Free experiment added to Phase 4B:** shift the headband up and back so TP9/TP10 move
+  toward T7/T8, and measure it. Zero cost, possibly worth more than the electrode.
+* **A second device is the only real route to C3 and C4 together.** Verified BrainFlow
+  board ids and rates are tabulated in topic 14 section 8. It does not need to be
+  synchronised with the Muse, because it replaces the Muse for that condition rather
+  than running alongside it. Note the different safety situation: a bare amplifier plus
+  a mains-connected laptop is not the isolated setup the Muse is.
+
+## 2026-08-04, the source pruning
+
+Robin asked for the reading load in `topics/` to be cut hard: keep only what is genuinely
+necessary, split into two tiers, promote crucial papers into the top tier, and extend the
+explanations so the documents carry more of the teaching themselves. Done across all 14
+topic documents and `topics/README.md`.
+
+**New structure.** `### Start here` / `### Go deeper` / `### Papers` / `### Video` is
+replaced everywhere by `### Tier 1` (read before the phase) and `### Tier 2` (open when
+needed). Each Sources section now opens with a sentence saying how much reading this
+particular topic actually deserves, and several say outright that there is no paper worth
+reading for it (06, 11, 13).
+
+**What was cut and why**, so it is not re-added by accident:
+
+* **All video links.** Passive, and none was the best available explanation of anything.
+* **Books Robin probably does not own**: Luck's ERP book (was in 01, 03, 06), the Wolpaw
+  & Wolpaw textbook (02, 10), Nunez & Srinivasan. The Wolpaw textbook is replaced by
+  Wolpaw et al. (2002), which states the BCI definition the project depends on and is
+  findable free. Books that survive are free online or Tier 2 lookups only: Malmivuo,
+  Smith's DSP guide, ESL section 7.10.2, Cohen's ANTS.
+* **Duplicate papers across topics.** Haufe, Neuper, Shenoy, Vidaurre, Schalk and
+  Pfurtscheller & Neuper each appeared in two or three documents. Each now appears once.
+* **Papers superseded by a better one**: Ramoser 2000 (by Blankertz 2008), Müller-Putz
+  2008 and Kriegeskorte 2009 (by Combrisson & Jerbi 2015 and ESL 7.10.2), Lotte 2007 (by
+  Lotte 2018), Widmann 2015 and Rousselet 2012 (by de Cheveigné & Nelken 2019).
+* **Community sites**: NeuroTechX and OpenBCI dropped from 02, 04 and 12; Makoto's
+  pipeline, OpenViBE, the Mind Monitor forum and andrewjsauer's tutorial dropped.
+* Paper count went from about forty to **17**: 8 in Tier 1, 9 in Tier 2. The Tier 1 eight
+  are tabulated in `topics/README.md`.
+
+**Every surviving paper has at least one question attached**, which was the test applied
+when deciding whether to keep it. Questions whose source was cut were re-sourced or
+rewritten rather than deleted, so no question was lost. Total went 164 to **167**.
+
+**Explanations extended** where cutting a source would otherwise have left a gap:
+
+* 01: skull conductivity and why the smearing happens; volume conduction is not a delay;
+  a new "What EEG buys, and what it costs" section (EEG vs. fMRI, and the sqrt(n) SNR
+  argument for trial counts); "there is no neutral reference".
+* 02: a new "What counts as a BCI" section stating Wolpaw's definition and the
+  paralysed-user test. This was previously only in the dropped textbook, and it is the
+  distinction the whole eye/jaw framing rests on.
+* 03: rejection vs. correction as named alternatives with the argument for each; a
+  "Where cleaning sits in the pipeline" ordering section replacing Makoto's checklist.
+* 04: why an arrival timestamp cannot fix jitter (chunked packets, reconstructed
+  timestamps), replacing most of the LSL reading.
+* 06: how long a baseline should be, in both directions, and how it forces the rest
+  period in Phase 4.
+* 08: LDA vs. logistic regression as generative vs. discriminative, and why that favours
+  LDA at 60 trials. This is the actual reason LDA is the BCI default.
+* 12: the ITR formula worked through for N=2, including that P=0.5 gives exactly 0 bits,
+  and the two honesty requirements when reporting it.
+
+**Answers checked this session**: topic 01 Q1 to Q6 and Q9, topic 02 Q1 to Q6. Thirteen
+questions, all now `reviewed: yes`. Two correct-but-thin (01 Q2 units, 01 Q4 reference),
+two partly correct (01 Q1 single-neuron amplitude vs. noise, 02 Q3 beta rebound described
+as new waves rather than resynchronisation), two "IDK" answered in full (01 Q9 skull
+conductivity, 02 Q5 the 95 %-on-execution trap). The pattern worth watching: Robin
+reaches for "drowned in noise" where the right answer is "too small to measure" or
+"resynchronised", i.e. he is reasoning about SNR where the mechanism is summation.
+
+Convention added above: a `> **Check:**` line is separated from the answer by a `>` line,
+not a blank one, so both stay in one blockquote and MD028 does not fire.
+
+Not changed: the reading order, the phase mapping, and every topic's explanation outside
+the additions listed above.
+
+Next: unchanged. Phase 0, `pip uninstall csp`, then data out of the Muse.

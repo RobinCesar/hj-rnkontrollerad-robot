@@ -83,6 +83,33 @@ the classes, and its position is determined only by the trials nearest the bound
 wider margin and more tolerance of misclassified training points, i.e. more
 regularisation. Start at `C=1.0`.
 
+## LDA vs. logistic regression: the same boundary, fitted differently
+
+These two produce a decision boundary of exactly the same functional form, a hyperplane,
+and beginners often assume they are the same method under two names. They are not, and
+the difference is precisely the one that matters at 60 trials.
+
+* **LDA is generative.** It models each class as a Gaussian, estimates the class means
+  and the shared covariance, and *derives* the boundary from those. It is making a strong
+  assumption about how the data was produced.
+* **Logistic regression is discriminative.** It models the probability of the class given
+  the features directly, and fits the boundary by maximum likelihood. It assumes nothing
+  about the shape of the class distributions.
+
+The trade-off is the classic one between assumptions and data. When the Gaussian
+assumption is roughly true, LDA extracts more information per trial, because it is using
+structure that logistic regression ignores, and it therefore reaches a good boundary from
+fewer samples. When the assumption is false, LDA is biased and logistic regression
+eventually wins, but "eventually" means once you have enough data for the weaker method
+to catch up.
+
+You have 60 trials, and the `log` step in CSP was chosen specifically to make the
+features approximately Gaussian. That combination is the regime where LDA is favoured,
+and it is the actual reason LDA is the BCI default rather than mere convention. Logistic
+regression remains worth having in the pipeline for one practical reason: its
+probabilities are the best calibrated of the three options here, which matters for the
+game's confidence display and its abstention threshold.
+
 ## Other options and when to consider them
 
 | Method | Verdict for this project |
@@ -200,63 +227,42 @@ step is named `csp`, how do you refer to its `n_components` parameter inside a
 
 > **Answer:** _(unanswered)_
 
-**Q12.** LDA and logistic regression both produce a linear decision boundary of the same
-functional form. What is actually different between them, and why does that difference
-matter more when you have very few trials?
-*Source: Hastie, Tibshirani & Friedman, "The Elements of Statistical Learning", ch. 4.
-`reviewed: no`*
+**Q12.** Lotte et al. (2018) give recommendations by data regime rather than a single
+best method. What do they recommend for a small-sample, few-feature, two-class motor
+imagery problem, and what do they say about Riemannian methods? Does their advice match
+what this document told you to do?
+*Source: Lotte et al. (2018). `reviewed: no`*
 
 > **Answer:** _(unanswered)_
 
 ## Sources
 
-### Start here
+This is the least risky part of the pipeline, so it gets the smallest reading list in the
+folder. **Tier 1** is two scikit-learn pages. Resist the temptation to go deeper here;
+the accuracy is not hiding in the classifier.
+
+### Tier 1
 
 * **scikit-learn, "Linear and Quadratic Discriminant Analysis"**,
   https://scikit-learn.org/stable/modules/lda_qda.html
   Includes a section specifically on shrinkage and why it helps, with a figure showing
-  the effect as the feature count grows.
-* **scikit-learn, "Support Vector Machines"**,
-  https://scikit-learn.org/stable/modules/svm.html
-  Read the "Tips on Practical Use" section, which covers scaling and `C` selection.
+  the effect growing as the feature count grows. That figure is the argument for the one
+  parameter choice that matters in this topic.
 * **scikit-learn, "Pipelines and composite estimators"**,
   https://scikit-learn.org/stable/modules/compose.html
-  How to chain CSP, scaling and the classifier into one object. This is the mechanism
-  that keeps your validation honest.
+  How to chain CSP, scaling and the classifier into one object. This is not a convenience
+  topic: it is the mechanism that keeps your validation honest, and
+  [09](09-validation.md) depends on it entirely.
 
-### Go deeper
+### Tier 2
 
-* **Hastie, Tibshirani & Friedman, "The Elements of Statistical Learning"**, free PDF
-  from the authors at https://hastie.su.domains/ElemStatLearn/
-  Chapter 4 covers LDA properly, chapter 12 covers SVMs. Mathematical but the reference.
-* **MOABB**, https://moabb.neurotechx.com/docs/index.html
-  Benchmarks of classifier choices across many motor imagery datasets. The most direct
-  answer to "how much does the classifier actually matter here", and the answer is
-  "less than you would think".
-
-### Papers
-
-* Lotte, F., Bougrain, L., Cichocki, A., et al. (2018). "A review of classification
-  algorithms for EEG-based brain-computer interfaces: a 10 year update." *Journal of
-  Neural Engineering*, 15(3), 031005. **The survey to read.** Covers every method used
-  in BCI with recommendations by data regime. If you read one paper on classification
-  for this project, make it this.
-* Blankertz, B., Lemm, S., Treder, M., Haufe, S., & Müller, K.-R. (2011). "Single-trial
-  analysis and classification of ERP components: a tutorial review." *NeuroImage*,
-  56(2), 814-825. The case for shrinkage LDA in EEG, with the reasoning about
-  covariance estimation.
-* Lotte, F., Congedo, M., Lécuyer, A., Lamarche, F., & Arnaldi, B. (2007). "A review of
-  classification algorithms for EEG-based brain-computer interfaces." *Journal of Neural
-  Engineering*, 4(2), R1-R13. The original version of the 2018 review, still useful for
-  the fundamentals.
-* Haufe, S., et al. (2014). "On the interpretation of weight vectors of linear models in
-  multivariate neuroimaging." *NeuroImage*, 87, 96-110. Why classifier weights are not
-  feature importances.
-
-### Video
-
-* **StatQuest: Linear Discriminant Analysis (LDA) clearly explained**,
-  https://www.youtube.com/watch?v=azXCzI57Yfc
-  The clearest available explanation of what LDA is actually doing: projecting onto
-  the axis that maximises between-class separation relative to within-class spread.
-  Ten minutes, no prerequisites.
+* **scikit-learn, "Support Vector Machines"**,
+  https://scikit-learn.org/stable/modules/svm.html
+  Read the "Tips on Practical Use" section only, which covers scaling and choosing `C`.
+  You need this the day you run the SVM comparison in Phase 3, and not before.
+* **Lotte, F., Bougrain, L., Cichocki, A., et al. (2018). "A review of classification
+  algorithms for EEG-based brain-computer interfaces: a 10 year update."** *Journal of
+  Neural Engineering*, 15(3), 031005. The survey of the field, with recommendations
+  broken down by data regime. Read the recommendations and the summary tables rather than
+  the whole thing, and use it as the citation justifying your classifier choice in the
+  method section.
