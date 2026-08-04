@@ -188,38 +188,91 @@ Write your answers in the boxes. See
 [the convention](README.md#answering-the-questions).
 
 **Q1.** Why does an 8 to 30 Hz bandpass filter fail to remove jaw EMG?
-*Source: this document. `reviewed: no`*
+*Source: this document. `reviewed: yes`*
 
-> **Answer:** _(unanswered)_
+> **Answer:** Jaw clenches produces signals that starts at 20Hz
+>
+> **Check:** Partly correct. Right direction, wrong picture of the spectrum. EMG is
+> broadband, not something that "starts" at 20 Hz: it has energy across a wide range and
+> extends well past 100 Hz, and what matters is that it is *dominant* above 20 Hz, so the
+> top of your passband (20 to 30 Hz) sits inside it. The filter cannot separate them
+> because they genuinely overlap in frequency, not because the cutoff is in the wrong
+> place. That is exactly why the EMG diagnostic has to be spectral *shape* (Q6) rather
+> than another filter.
 
 **Q2.** You see a sharp peak at exactly 50 Hz. What is it, and does it threaten your
 result?
-*Source: this document. `reviewed: no`*
+*Source: this document. `reviewed: yes`*
 
-> **Answer:** _(unanswered)_
+> **Answer:** It's the mains noise, no it does not considering im measuring signals below 30Hz
+>
+> **Check:** Partly correct. The identification is right and so is the point that the
+> bandpass excludes it, but "does not threaten my result" is too quick. A large 50 Hz peak
+> is a *symptom*, usually of a poorly seated electrode or nearby mains equipment, and an
+> electrode with contact bad enough to pick up that much mains is also producing drift and
+> noise inside your band. It also lands squarely in the range you use for the EMG
+> diagnostic, the class-spectrum comparison above 30 Hz, so it has to be notched before
+> that check is readable at all. Treat the peak as a signal-quality alarm, not merely as
+> out-of-band noise.
 
 **Q3.** Why is horizontal eye movement a particularly bad confound for *this*
 classification task specifically?
-*Source: this document. `reviewed: no`*
+*Source: this document. `reviewed: yes`*
 
-> **Answer:** _(unanswered)_
+> **Answer:** It is left-right lateralised, which is the same as left-right hand. It will produce the same effect as the one im measuring
+>
+> **Check:** Correct, and it is the essential point. For the report, add the mechanism:
+> the eyeball is a dipole, so a horizontal saccade produces opposite-sign deflections at
+> AF7 and AF8, which sit directly beside the eyes. If the subject glances toward the cued
+> side, the confound is perfectly correlated with the label, which is the worst case there
+> is. Note also that it is larger than the effect you want, by roughly an order of
+> magnitude.
 
 **Q4.** Why is ICA a poor fit for a 4-channel headset?
-*Source: this document. `reviewed: no`*
+*Source: this document. `reviewed: yes`*
 
-> **Answer:** _(unanswered)_
+> **Answer:** It needs more channels to work properly
+>
+> **Check:** True, but too thin to use. The specific reason is a hard limit: ICA extracts
+> at most as many components as you have channels, so four channels give you exactly four
+> components, and each is a blurred mixture of brain and artifact rather than a clean "eye
+> component" you could delete. Discarding one throws away a quarter of your data along
+> with the artifact. That number, four, is what the report paragraph needs; "more
+> channels" is not an argument anyone can check.
 
 **Q5.** Design an experiment that would prove your classifier is reading muscles rather
 than brain.
-*Source: this document. `reviewed: no`*
+*Source: this document. `reviewed: yes`*
 
-> **Answer:** _(unanswered)_
+> **Answer:** At the cues, clench your jaw. If the classifier gives the same result, it proves it is reading muscles
+>
+> **Check:** Partly correct. This is the right experiment, the deliberate-artifact session
+> from the control table, but the design and the logic both need tightening. It has to be
+> a *separate* recording: clenching during your imagery session just contaminates the real
+> data instead of measuring anything. What you compare is accuracy, not individual
+> predictions, so you run the identical pipeline on the clench session and see what it
+> scores. And it proves nothing on its own; it establishes the *upper bound* of what
+> artifacts alone achieve on this hardware, which is only interpretable next to your
+> imagery number. That is precisely why it is a rung of the ladder rather than a
+> standalone test. Two cheaper controls point the same way: rerun the pipeline at 8 to
+> 13 Hz, where there is very little EMG, and compare class spectra above 30 Hz.
 
 **Q6.** Real beta and EMG both put power in the 20 to 30 Hz range. What is the shape
 difference between them in a power spectrum, and how do you use it as a diagnostic?
-*Source: this document. `reviewed: no`*
+*Source: this document. `reviewed: yes`*
 
-> **Answer:** _(unanswered)_
+> **Answer:** An EMG wave produces a higher amplitude (mikrovolt) than the beta waves. If the amplitude is consistently high, my classifier is reading muslces
+>
+> **Check:** Wrong, and this is the one to fix. The question asks about *shape* and the
+> answer is about *level*. Absolute amplitude cannot separate them: µV values shift with
+> electrode impedance, session, subject and how hard the headband is pressed on, so there
+> is no threshold you could set and defend. The shape difference is the whole diagnostic.
+> Real beta is a **peak**, a bump around 20 Hz that comes back down again. EMG rises
+> **monotonically** across 20 to 40 Hz and keeps climbing past that. So what you look at
+> is whether power is still going up above 30 Hz, where there is almost no legitimate
+> scalp EEG, and whether your two classes differ up there. A class difference above 30 Hz
+> is muscle. This matters downstream because it is the check you run on the CSP filters
+> in Phase 4, and an amplitude criterion would pass contaminated data.
 
 **Q7.** MNE's ICA tutorial recommends high-pass filtering at around 1 Hz before fitting
 ICA, higher than you would use for the analysis itself. What is the reason, and what do

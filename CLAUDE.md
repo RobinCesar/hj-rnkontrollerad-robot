@@ -396,3 +396,30 @@ Not changed: the reading order, the phase mapping, and every topic's explanation
 the additions listed above.
 
 Next: unchanged. Phase 0, `pip uninstall csp`, then data out of the Muse.
+
+## 2026-08-04, answers checked in topics 03 and 04
+
+Twelve questions graded, topic 03 Q1 to Q6 and topic 04 Q1 to Q6, all now `reviewed: yes`.
+Q7 to Q11 in both documents are still unanswered. Result: 1 correct (03 Q3), 8 partly
+correct, 3 wrong (03 Q6, 04 Q1, 04 Q3), and 04 Q4 answered "didn't understand", so the
+blink-synchronisation procedure was written out in full in the answer box.
+
+Patterns worth watching, since they recur:
+
+* **Level instead of shape.** 03 Q6 answered the beta-vs-EMG discriminator as "EMG has
+  higher amplitude". Absolute µV cannot separate them; the diagnostic is that beta peaks
+  and EMG rises monotonically. Same instinct as the topic 01/02 pattern already noted: he
+  reaches for a magnitude story where the mechanism is structural.
+* **Naming the thing without the mechanism.** 03 Q1, 03 Q4 and 04 Q2 were all right-ish
+  but too thin to survive in a report. The number that matters (ICA gives exactly four
+  components; `get_current_board_data` leaves the buffer unchanged) was the missing half
+  each time.
+* **Labels from position rather than from data.** 04 Q3 assumed alternating cue order and
+  counted to the third left cue, plus a row/column mixup. Flagged hard: this is a silent
+  mislabelling bug, and it is the one on this list with real downstream cost. Marker
+  *values* are the source of truth, and the order is randomised.
+* 04 Q1 took the nearest number in the document (3.9 ms, the sample interval) instead of
+  computing 45000 / 256 = 176 s.
+
+Not changed: no topic document needed fixing. Every wrong answer was contradicted by text
+already present in the document it came from.

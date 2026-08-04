@@ -188,36 +188,100 @@ Write your answers in the boxes. See
 
 **Q1.** Your ring buffer is 45000 samples and you sample at 256 Hz. How long can you go
 between reads?
-*Source: this document. `reviewed: no`*
+*Source: this document. `reviewed: yes`*
 
-> **Answer:** _(unanswered)_
+> **Answer:** 3.9ms
+>
+> **Check:** Wrong. 3.9 ms is the interval between two *samples*, 1/256 s, which is the
+> number sitting a few lines above the buffer section. The question is how long the buffer
+> takes to fill: 45000 / 256 = 176 s, so you have about three minutes between reads before
+> old samples start being overwritten. Worth remembering the failure mode as well as the
+> number, because it is why this is asked at all: you get no exception and no warning,
+> just missing data.
 
 **Q2.** Why is `get_current_board_data()` the right call for the real-time loop?
-*Source: this document. `reviewed: no`*
+*Source: this document. `reviewed: yes`*
 
-> **Answer:** _(unanswered)_
+> **Answer:** It only gives the latest window.
+>
+> **Check:** Half of it. It does return the latest window, but you have left out the
+> operative property, which is the second column of that table: it leaves the buffer
+> **unchanged**. That is what allows consecutive calls to return *overlapping* windows,
+> and overlapping windows are what a sliding window is. `get_board_data()` empties the
+> buffer, so a real-time loop built on it gets variable-length, non-overlapping chunks
+> whose length depends on how long your previous iteration happened to take.
 
 **Q3.** How would you find the sample index of the third "left" cue in a recording?
-*Source: this document. `reviewed: no`*
+*Source: this document. `reviewed: yes`*
 
-> **Answer:** _(unanswered)_
+> **Answer:** If you start with left, it will be the fifth sample, which would then be the fifth entry in the second column of the 2d array that brainflow gives back
+>
+> **Check:** Wrong in three separate ways, and the third one is genuinely dangerous.
+> (a) Cue number is not sample number. Cues are seconds apart, so at 256 Hz the third left
+> cue is several thousand samples into the recording, and exactly where depends on the
+> protocol timing. It is data you look up, not a position you count to.
+> (b) The array is `(n_rows, n_samples)` with time along the second axis, so the markers
+> are a **row**, `data[BoardShim.get_marker_channel(board_id)]`, not a column.
+> (c) "If you start with left" is the one to unlearn. You must never infer the class from
+> position in the sequence: the trial order is randomised (topic 10), and the *value*
+> stored in the marker row is what tells you the class. Deriving labels from an assumed
+> ordering instead of reading them out of the data is a silent mislabelling bug that
+> raises no error and simply looks like the effect not existing.
+> The method: take the marker row, `np.flatnonzero(marker_row == 1)` for the left events,
+> then index `[2]`.
 
 **Q4.** Design a procedure to measure your cue-to-marker latency to within 50 ms.
-*Source: this document. `reviewed: no`*
+*Source: this document. `reviewed: yes`*
 
-> **Answer:** _(unanswered)_
+> **Answer:** I didnt really understand this
+>
+> **Check:** Not answered, so here it is in full. The problem: `insert_marker()` records
+> when *your code ran*, and you want to know when the *subject saw the cue*. Nothing inside
+> your program can tell you the gap, so you need one event that is visible both in your
+> program's timeline and in the EEG itself. A blink is ideal, because it is enormous and
+> frontal and impossible to miss. Bind a single keypress so that it both inserts a marker
+> and is the subject's cue to blink hard immediately. Repeat about 20 times. Then, in the
+> recording, find each blink peak and measure how many samples it sits from its marker.
+> The **mean** of those offsets is your constant delay, and you can subtract it. The
+> **standard deviation** is your jitter, and you cannot subtract it, so you report it
+> instead. On resolution: 50 ms is 13 samples at 256 Hz, so the sampling rate is nowhere
+> near the limiting factor; the repetitions are what make the mean stable enough. Do this
+> experiment. Most student BCI projects simply assert their timing was fine.
 
 **Q5.** Why would a 400 ms timing error be much worse than a 40 ms one, given a 3 s
 analysis window?
-*Source: this document. `reviewed: no`*
+*Source: this document. `reviewed: yes`*
 
-> **Answer:** _(unanswered)_
+> **Answer:**  It can push the analysis past the ERD onset, didnt really understand though
+>
+> **Check:** Partly correct; the quoted phrase is right and the reasoning under it is what
+> was missing. The key fact is that ERD is **not uniform across the trial**: it develops
+> over roughly the first second after the cue and is strongest somewhere around 0.5 to 2 s
+> in. Shift a 3 s window by 40 ms and you have moved it about 1 % of its length, so the
+> same part of the response is still inside it. Shift it by 400 ms and the window starts
+> before the cue, so a substantial slice of what you analyse is pre-cue baseline, where by
+> construction there is no class difference at all. The effect does not vanish, it gets
+> **diluted** with data that carries no signal, which lowers accuracy while looking exactly
+> like "there was no effect to find". The second half matters more: a constant 400 ms
+> offset can be measured and subtracted (Q4), but 400 ms of trial-to-trial *jitter* cannot
+> be, because every trial is shifted differently and the effect smears out across them.
 
 **Q6.** Of the delay sources listed in the timing table, which can you compensate for
 after the fact and which can you not? What do you do with the ones you cannot?
-*Source: this document. `reviewed: no`*
+*Source: this document. `reviewed: yes`*
 
-> **Answer:** _(unanswered)_
+> **Answer:** Cannot: reaction time of subject, bluetooth transmission, code scheduling. Can: Display latency. For the ones I cannot, record it and subtract afterwards
+>
+> **Check:** Partly correct. The split is right, and for the right underlying reason,
+> which is worth saying out loud because it generalises: the criterion is not *which
+> source* it is, it is whether the delay is **constant**. Display latency is roughly
+> constant, so it can be subtracted; Bluetooth/OS, scheduling and reaction time vary from
+> trial to trial, so they cannot. The last sentence contradicts itself, though: if you
+> could record and subtract them, you would have compensated for them. Sharpen it to mean
+> versus variance. Every source has both a mean and a spread; the blink experiment in Q4
+> measures the total, you subtract the **mean**, and the **spread** is what remains. What
+> you do with the spread is report it, and make sure the paradigm tolerates it, which is
+> why multi-second imagery windows are fine here and an ERP paradigm would not be.
 
 **Q7.** What do `prepare_session()`, `start_stream()` and `release_session()` each do,
 and in what order must they be called? What are the two arguments to `start_stream()`
